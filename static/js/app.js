@@ -1,0 +1,359 @@
+/* IMSERV - Main Application Controller */
+
+const VIEW_CONFIG = {
+  journey: { title: 'Smart Meter Appointment Journey Overview', breadcrumb: 'IMSERV / Appointments / Appointment Journey', loader: loadJourneyDashboard },
+  forecasting: { title: 'Appointment and Resource Planning', breadcrumb: 'IMSERV / Planning / Contact Attempt Forecast and Capacity', loader: loadFieldOpsDashboard },
+  cancellations: { title: 'Appointment Fallout Risk and Recovery', breadcrumb: 'IMSERV / Appointments / Risk and Recovery', loader: loadCancellationsDashboard },
+  'field-ops': { title: 'Appointment and Resource Planning', breadcrumb: 'IMSERV / Planning / Contact Attempt Forecast and Capacity', loader: loadFieldOpsDashboard },
+  financial: { title: 'Appointment and Resource Financial Planning', breadcrumb: 'IMSERV / Finance / Scenario Impact', loader: loadFinancialDashboard },
+};
+
+let _currentView = 'journey';
+let _sidebarResizeObserver = null;
+const _viewLoadKeys = new Map();
+
+function getViewYear(viewName) {
+  return ['forecasting', 'field-ops', 'financial'].includes(viewName) ? 2026 : 2025;
+}
+
+function getViewLoadKey(viewName) {
+  return `${viewName}|${IMSERV.getRegion()}|${getViewYear(viewName)}`;
+}
+
+function invalidateLoadedViews() {
+  _viewLoadKeys.clear();
+  if (typeof invalidateForecastLoadState === 'function') invalidateForecastLoadState();
+  if (typeof invalidateOpsLoadState === 'function') invalidateOpsLoadState();
+}
+
+function loadViewData(viewName, force = false) {
+  const config = VIEW_CONFIG[viewName];
+  if (!config?.loader) return Promise.resolve();
+
+  const key = getViewLoadKey(viewName);
+  if (!force && _viewLoadKeys.get(viewName) === key) {
+    return Promise.resolve();
+  }
+
+  _viewLoadKeys.set(viewName, key);
+  const result = config.loader(force);
+  if (result?.catch) {
+    result.catch(() => _viewLoadKeys.delete(viewName));
+  }
+  return result;
+}
+
+function syncSidebarWidth() {
+  const sidebar = document.getElementById('sidebar');
+  if (!sidebar) return;
+  const width = Math.ceil(sidebar.getBoundingClientRect().width);
+  document.documentElement.style.setProperty('--nav-current-width', `${width}px`);
+}
+
+function initFluidSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  if (!sidebar) return;
+  updateSidebarControls();
+  syncSidebarWidth();
+  if ('ResizeObserver' in window) {
+    _sidebarResizeObserver?.disconnect();
+    _sidebarResizeObserver = new ResizeObserver(syncSidebarWidth);
+    _sidebarResizeObserver.observe(sidebar);
+  }
+  window.addEventListener('resize', syncSidebarWidth);
+  document.fonts?.ready?.then(syncSidebarWidth);
+}
+
+function updateSidebarControls() {
+  const sidebar = document.getElementById('sidebar');
+  const collapsed = sidebar?.classList.contains('collapsed') || false;
+  const label = collapsed ? 'Expand sidebar' : 'Collapse sidebar';
+  const icon = collapsed ? 'panelLeftOpen' : 'panelLeftClose';
+
+  document.querySelectorAll('#sidebar-toggle, #sidebar-header-toggle').forEach(control => {
+    control.setAttribute('aria-expanded', String(!collapsed));
+    control.setAttribute('title', label);
+  });
+
+  document.querySelectorAll('.sidebar-toggle-label').forEach(el => {
+    el.textContent = collapsed ? 'Expand Sidebar' : 'Collapse Sidebar';
+  });
+
+  document.querySelectorAll('.sidebar-toggle-icon').forEach(el => {
+    if (window.IMSERV?.iconSvg) {
+      el.innerHTML = IMSERV.iconSvg(icon);
+      el.classList.add('modern-icon');
+      el.dataset.iconReady = 'true';
+    }
+  });
+}
+
+function activateSidebarSubnav(viewName, tabName) {
+  document.querySelectorAll('.nav-subitem').forEach(n => n.classList.remove('active'));
+  if (!viewName || !tabName) return;
+  const item = document.querySelector(`.nav-subitem[data-parent="${viewName}"][data-subtab="${tabName}"]`);
+  if (item) item.classList.add('active');
+}
+
+function switchView(viewName, navEl) {
+  if (viewName === 'forecasting') viewName = 'field-ops';
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-item[data-view]').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.nav-subitem').forEach(n => n.classList.remove('active'));
+
+  const view = document.getElementById('view-' + viewName);
+  if (view) view.classList.add('active');
+  const mainNav = navEl?.dataset?.view === viewName
+    ? navEl
+    : document.querySelector(`.nav-item[data-view="${viewName}"]`);
+  if (mainNav) mainNav.classList.add('active');
+
+  const config = VIEW_CONFIG[viewName];
+  if (config) {
+    const titleEl = document.getElementById('page-title');
+    const breadEl = document.getElementById('page-breadcrumb');
+    if (titleEl) titleEl.textContent = config.title;
+    if (breadEl) breadEl.textContent = config.breadcrumb;
+  }
+
+  _currentView = viewName;
+  loadViewData(viewName);
+  if (viewName === 'field-ops') activateSidebarSubnav(viewName, typeof _activeOpsTab !== 'undefined' ? _activeOpsTab : 'capacity');
+}
+
+function onRegionChange() {
+  invalidateLoadedViews();
+  refreshCurrentView();
+}
+
+function onYearChange() {
+  invalidateLoadedViews();
+  refreshCurrentView();
+}
+
+function refreshCurrentView(force = true) {
+  if (force) invalidateLoadedViews();
+  loadViewData(_currentView, force);
+}
+
+function exportCurrentView() {
+  const links = {
+    journey: '/api/journey/kpis',
+    forecasting: '/api/forecasting/channel-kpis',
+    cancellations: '/api/cancellations/kpis',
+    'field-ops': '/api/field-ops/kpis',
+    financial: '/api/financial/kpis',
+  };
+  const url = links[_currentView];
+  if (url) window.open(url + '?format=csv', '_blank');
+}
+
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  if (sidebar) sidebar.classList.toggle('collapsed');
+  updateSidebarControls();
+  requestAnimationFrame(syncSidebarWidth);
+  window.setTimeout(syncSidebarWidth, 280);
+}
+
+function openAiPanel() {
+  const overlay = document.getElementById('ai-modal');
+  if (!overlay) return;
+  overlay.classList.add('open');
+  loadAiModal();
+}
+
+function closeAiPanel() {
+  const overlay = document.getElementById('ai-modal');
+  if (overlay) overlay.classList.remove('open');
+}
+
+async function loadAiModal() {
+  const body = document.getElementById('ai-modal-body');
+  if (!body) return;
+  body.innerHTML = '<div class="loading"><span class="spinner"></span> Generating AI insights...</div>';
+
+  const year = IMSERV.getYear();
+  const ai = await IMSERV.apiFetch('/api/ai/dashboard?year=' + year + '&max=15');
+  const recs = ai?.recommendations;
+  if (recs && typeof updateAiTriggerState === 'function') updateAiTriggerState(recs);
+
+  if (!recs) {
+    body.innerHTML = '<div class="empty-state"><div class="empty-icon"></div><div class="empty-title">Could not load recommendations</div></div>';
+    IMSERV.hydrateIcons(body);
+    return;
+  }
+
+  const summaryHtml = ai?.summary ? `
+    <div class="ai-summary-bar mb-16">
+      <div class="ai-icon"></div>
+      <div class="ai-text">${ai.summary}</div>
+    </div>
+  ` : '';
+
+  const recsHtml = (recs.recommendations || []).map(r => `
+    <div class="rec-card ${r.priority}">
+      <div class="rec-icon"></div>
+      <div class="rec-body">
+        <div class="rec-title">${r.title}</div>
+        <div class="rec-desc">${r.body}</div>
+        <div class="rec-meta">
+          <span class="priority ${r.priority}">${r.priority}</span>
+          ${r.region_code ? `<span class="stat-chip">Region: <strong>${r.region_code}</strong></span>` : ''}
+          ${r.metric_value != null ? `<span class="rec-metric">${r.metric_label}: ${r.metric_value}</span>` : ''}
+          ${r.action_required ? '<span class="rag Red">Action Required</span>' : ''}
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  body.innerHTML = summaryHtml + `
+    <div class="d-flex gap-8 mb-12 flex-wrap">
+      <span class="stat-chip">Critical: <strong>${recs.critical_count}</strong></span>
+      <span class="stat-chip">High: <strong>${recs.high_count}</strong></span>
+      <span class="stat-chip">Action Required: <strong>${recs.action_required_count}</strong></span>
+    </div>
+    <div class="rec-list">${recsHtml}</div>
+  `;
+  IMSERV.hydrateIcons(body);
+}
+
+document.getElementById('ai-modal')?.addEventListener('click', function (e) {
+  if (e.target === this) closeAiPanel();
+});
+
+let _chatbotHistory = [];
+let _chatbotBusy = false;
+
+function escapeChatHtml(value = '') {
+  return String(value).replace(/[&<>"']/g, char => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  }[char]));
+}
+
+function toggleChatbot(forceOpen) {
+  const widget = document.getElementById('chatbot-widget');
+  const launcher = document.getElementById('chatbot-launcher');
+  const input = document.getElementById('chatbot-input');
+  if (!widget) return;
+
+  const open = forceOpen == null ? !widget.classList.contains('open') : Boolean(forceOpen);
+  widget.classList.toggle('open', open);
+  launcher?.setAttribute('aria-expanded', String(open));
+  if (open) window.setTimeout(() => input?.focus(), 120);
+}
+
+function setChatbotStatus(label, busy = false) {
+  const status = document.getElementById('chatbot-status');
+  const send = document.getElementById('chatbot-send');
+  const input = document.getElementById('chatbot-input');
+  if (status) status.textContent = label;
+  if (send) send.disabled = busy;
+  if (input) input.disabled = busy;
+  _chatbotBusy = busy;
+}
+
+function appendChatMessage(role, content, options = {}) {
+  const messages = document.getElementById('chatbot-messages');
+  if (!messages) return null;
+  const item = document.createElement('div');
+  item.className = `chatbot-message ${role}${options.pending ? ' pending' : ''}`;
+  item.innerHTML = `<div class="chatbot-bubble">${escapeChatHtml(content).replace(/\n/g, '<br>')}</div>`;
+  messages.appendChild(item);
+  messages.scrollTop = messages.scrollHeight;
+  return item;
+}
+
+function activeViewName() {
+  return (document.querySelector('.view.active')?.id || 'view-journey').replace(/^view-/, '');
+}
+
+async function sendChatbotMessage(event) {
+  event?.preventDefault();
+  if (_chatbotBusy) return;
+
+  const input = document.getElementById('chatbot-input');
+  const text = event?.question || input?.value.trim();
+  if (!text) return;
+
+  if (input) {
+    input.value = '';
+    input.style.height = '';
+  }
+  appendChatMessage('user', text);
+  _chatbotHistory.push({ role: 'user', content: text });
+
+  const pending = appendChatMessage('assistant', 'Thinking...', { pending: true });
+  setChatbotStatus('Contacting Hugging Face', true);
+
+  try {
+    const resp = await fetch('/api/chatbot/message', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: _chatbotHistory.slice(-10),
+        region: IMSERV.getRegion(),
+        year: IMSERV.getYear(),
+        view: activeViewName(),
+      }),
+    });
+    const data = await resp.json().catch(() => ({}));
+    if (!resp.ok) throw new Error(data.error || `HTTP ${resp.status}`);
+
+    const reply = data.reply || 'I could not find a response from the model.';
+    pending?.remove();
+    appendChatMessage('assistant', reply);
+    _chatbotHistory.push({ role: 'assistant', content: reply });
+    _chatbotHistory = _chatbotHistory.slice(-12);
+    setChatbotStatus('Hugging Face LLM', false);
+  } catch (err) {
+    pending?.remove();
+    appendChatMessage('assistant', `Chatbot is not ready: ${err.message}`);
+    setChatbotStatus('Configuration needed', false);
+  }
+}
+
+function initChatbotWidget() {
+  const iconTargets = [
+    ['chatbot-launcher-icon', 'bot'],
+    ['chatbot-title-icon', 'bot'],
+    ['chatbot-close-icon', 'xCircle'],
+    ['chatbot-send-icon', 'send'],
+  ];
+  iconTargets.forEach(([id, icon]) => {
+    const el = document.getElementById(id);
+    if (el && window.IMSERV?.iconSvg) {
+      el.innerHTML = IMSERV.iconSvg(icon);
+      el.dataset.iconReady = 'true';
+    }
+  });
+
+  const input = document.getElementById('chatbot-input');
+  input?.addEventListener('keydown', event => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      sendChatbotMessage(event);
+    }
+  });
+  input?.addEventListener('input', () => {
+    input.style.height = 'auto';
+    input.style.height = `${Math.min(input.scrollHeight, 92)}px`;
+  });
+
+  document.querySelectorAll('.chatbot-suggestion').forEach(button => {
+    button.addEventListener('click', () => {
+      const question = button.dataset.question || button.textContent;
+      sendChatbotMessage({ preventDefault() {}, question });
+    });
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  initFluidSidebar();
+  initChatbotWidget();
+  loadViewData('journey');
+});

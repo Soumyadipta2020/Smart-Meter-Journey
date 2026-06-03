@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IMSERV - Smart Meter Appointment and Resource Planning</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- ──────────────────────────────────────────────────────────
+       SIDEBAR NAVIGATION
+  ────────────────────────────────────────────────────────────── -->
+  <aside class="sidebar" id="sidebar">
+
+    <div class="sidebar-brand">
+      <img class="brand-logo-image" src="/static/img/IMSERV_logo.png" alt="IMSERV" />
+    </div>
+
+    <nav class="sidebar-nav">
+
+      <div class="nav-section">
+        <div class="nav-section-label">Appointments</div>
+        <div class="nav-item active" data-view="journey" onclick="switchView('journey', this)">
+          <span class="nav-icon">📊</span>
+          <span class="nav-label">Appointment Journey</span>
+        </div>
+        <div class="nav-item" data-view="cancellations" onclick="switchView('cancellations', this)">
+          <span class="nav-icon">❌</span>
+          <span class="nav-label">Risk & Recovery</span>
+        </div>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-label">Planning</div>
+        <div class="nav-item" data-view="field-ops" onclick="switchView('field-ops', this)">
+          <span class="nav-icon">🔧</span>
+          <span class="nav-label">Planning</span>
+        </div>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-section-label">Finance</div>
+        <div class="nav-item" data-view="financial" onclick="switchView('financial', this)">
+          <span class="nav-icon">💷</span>
+          <span class="nav-label">Scenario Impact</span>
+        </div>
+      </div>
+
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="nav-item sidebar-toggle-item" id="sidebar-toggle" onclick="toggleSidebar()" role="button" aria-controls="sidebar" aria-expanded="true" title="Collapse sidebar">
+        <span class="nav-icon sidebar-toggle-icon" data-icon-ready="true" aria-hidden="true"></span>
+        <span class="nav-label sidebar-toggle-label">Collapse Sidebar</span>
+      </div>
+      <div class="nav-item" onclick="toggleTheme()">
+        <span class="nav-icon" id="theme-icon">🌙</span>
+        <span class="nav-label">Toggle Theme</span>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ──────────────────────────────────────────────────────────
+       MAIN CONTENT
+  ────────────────────────────────────────────────────────────── -->
+  <main class="main-content">
+
+    <!-- Top Header -->
+    <header class="top-header">
+      <button type="button" class="btn-icon sidebar-header-toggle" id="sidebar-header-toggle" onclick="toggleSidebar()" aria-controls="sidebar" aria-expanded="true" title="Collapse sidebar">
+        <span class="sidebar-toggle-icon" data-icon-ready="true" aria-hidden="true"></span>
+      </button>
+      <div class="header-title">
+        <h1 id="page-title">Smart Meter Appointment Journey Overview</h1>
+        <div class="breadcrumb" id="page-breadcrumb">IMSERV / Appointments / Appointment Journey</div>
+      </div>
+      <div class="header-actions">
+        <div class="filter-bar">
+          <select class="filter-select" id="global-region" onchange="onRegionChange()">
+            <option value="">All Regions</option>
+            <option value="NW">North West</option>
+            <option value="NE">North East</option>
+            <option value="MID">Midlands</option>
+            <option value="SE">South East</option>
+            <option value="SW">South West</option>
+            <option value="WAL">Wales</option>
+            <option value="SCO">Scotland</option>
+            <option value="YRK">Yorkshire</option>
+          </select>
+        </div>
+        <div class="btn-icon" onclick="refreshCurrentView()" title="Refresh">↻</div>
+        <div class="btn-icon" onclick="exportCurrentView()" title="Export">⬇</div>
+        <div class="btn-icon ai-trigger ok" id="ai-trigger" onclick="openAiPanel()" title="AI Insights"></div>
+      </div>
+    </header>
+
+    <!-- Page Content -->
+    <div class="page-content">
+
+      <!-- ════════════════════════════════════════════════════
+           MODULE 1 — BOOKINGS TO COMPLETIONS JOURNEY
+      ════════════════════════════════════════════════════════ -->
+      <div class="view active" id="view-journey">
+
+        <!-- AI Summary Bar -->
+        <div class="ai-summary-bar" id="journey-ai-summary">
+          <div class="ai-icon">🤖</div>
+          <div class="ai-text" id="journey-ai-text">Loading operational health summary...</div>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="kpi-grid" id="journey-kpis">
+          <div class="kpi-card info"><div class="kpi-label">Customer Data Loaded Into Dialler</div><div class="kpi-value" id="kpi-customers">—</div><div class="kpi-icon">👤</div></div>
+          <div class="kpi-card info"><div class="kpi-label">Contact Attempts</div><div class="kpi-value" id="kpi-contacts">—</div><div class="kpi-icon">📞</div></div>
+          <div class="kpi-card info"><div class="kpi-label">Appointments Booked</div><div class="kpi-value" id="kpi-appointments-booked">—</div><div class="kpi-icon">📋</div></div>
+          <div class="kpi-card warn"><div class="kpi-label">Appointments Cancelled (D-1)</div><div class="kpi-value" id="kpi-cancellations">—</div><div class="kpi-icon">⚠️</div></div>
+          <div class="kpi-card info"><div class="kpi-label">Total Visits</div><div class="kpi-value" id="kpi-bookings">—</div><div class="kpi-icon">📅</div></div>
+          <div class="kpi-card warn"><div class="kpi-label">Appointments Aborted On The Day Of Visit</div><div class="kpi-value" id="kpi-aborts">—</div><div class="kpi-icon">🚫</div></div>
+          <div class="kpi-card ok"><div class="kpi-label">Executed Successfully</div><div class="kpi-value" id="kpi-completions">—</div><div class="kpi-icon">✅</div></div>
+          <div class="kpi-card ok" id="kpi-success-rate-card"><div class="kpi-label">Success Rate</div><div class="kpi-value" id="kpi-completion-rate">—</div><div class="kpi-icon">📈</div></div>
+          <div class="kpi-card"><div class="kpi-label">Average Contacts Per Customer</div><div class="kpi-value" id="kpi-avg-contacts">—</div><div class="kpi-icon">👤</div></div>
+        </div>
+
+        <div class="grid-5-7">
+
+          <!-- Funnel Chart -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">📊 Smart Meter Appointment Journey Funnel</div>
+                <div class="card-subtitle">Shows customer data loaded into dialler, contact attempts, appointments booked, D-1 cancellations, total visits, same-day aborts and successful execution</div>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="funnel-container" id="funnel-chart"></div>
+            </div>
+          </div>
+
+          <!-- Weekly Trend -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">📈 Weekly Smart Meter Appointment and Success Trend</div>
+                <div class="card-subtitle">Compares total visits, executed-successfully outcomes, D-1 cancellations and same-day aborts</div>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="journey-rhythm" id="journey-trend-chart"></div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Appointment to Visit Success Funnel -->
+        <div class="card mb-16">
+          <div class="card-header"><div class="card-title">🎯 Appointment to Visit Success Funnel</div></div>
+          <div class="card-body" id="funnel-metrics-body">
+            <div class="loading"><span class="spinner"></span></div>
+          </div>
+        </div>
+
+        <!-- Regional Heatmap -->
+        <div class="card mb-16">
+          <div class="card-header">
+            <div>
+              <div class="card-title">🗺️ Regional Appointment and Success Status</div>
+              <div class="card-subtitle">Shows appointments booked, success rate and regional RAG status</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div id="regional-heatmap-grid" class="regional-radar-grid">
+              <div class="loading"><span class="spinner"></span> Loading...</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Channel Comparison -->
+        <div class="channel-lab mb-16">
+          <div class="channel-lab-topline">
+            <div>
+              <div class="channel-lab-title">Smart Meter Contact Attempt Channel Signal Map</div>
+              <div class="channel-lab-subtitle">Shows contact attempts, appointments booked, total-visit conversion and appointment contribution by channel</div>
+            </div>
+            <div class="channel-lab-legend">
+              <span><i class="legend-dot volume"></i>Bubble size = contact attempts</span>
+              <span><i class="legend-dot conversion"></i>Ring = appointments booked to total visits</span>
+              <span><i class="legend-dot abandon"></i>Marker = abandon</span>
+            </div>
+          </div>
+          <div id="channel-comparison-grid" class="channel-ecosystem">
+            <div class="loading"><span class="spinner"></span></div>
+          </div>
+        </div>
+
+        <!-- Supplier Behaviour -->
+        <div class="supplier-lab mb-16">
+          <div class="supplier-lab-topline">
+            <div>
+              <div class="supplier-lab-title">Supplier Behaviour and Contribution Map</div>
+              <div class="supplier-lab-subtitle">Shows supplier contribution, booking conversion, visit success, fallout, and unresolved appointment pressure</div>
+            </div>
+            <div class="supplier-lab-legend">
+              <span><i class="legend-dot contribution"></i>Size = contribution</span>
+              <span><i class="legend-dot behaviour"></i>Height = behaviour score</span>
+              <span><i class="legend-dot fallout"></i>Colour = fallout pressure</span>
+            </div>
+          </div>
+          <div id="supplier-behaviour-grid" class="supplier-ecosystem">
+            <div class="loading"><span class="spinner"></span></div>
+          </div>
+        </div>
+
+      </div><!-- /view-journey -->
+
+
+      <!-- ════════════════════════════════════════════════════
+           MODULE 3 — APPOINTMENT FALLOUT
+      ════════════════════════════════════════════════════════ -->
+      <div class="view" id="view-cancellations">
+
+        <div class="kpi-grid" id="cancel-kpis">
+          <div class="kpi-card crit"><div class="kpi-label">Appointments Cancelled (D-1)</div><div class="kpi-value" id="can-kpi-total">—</div><div class="kpi-icon">❌</div></div>
+          <div class="kpi-card crit"><div class="kpi-label">D-1 Cancellation Rate</div><div class="kpi-value" id="can-kpi-rate">—</div><div class="kpi-icon">📊</div></div>
+          <div class="kpi-card warn"><div class="kpi-label">Appointments Aborted On The Day Of Visit</div><div class="kpi-value" id="can-kpi-aborts">—</div><div class="kpi-icon">🚫</div></div>
+          <div class="kpi-card warn"><div class="kpi-label">Same-Day Abort Rate</div><div class="kpi-value" id="can-kpi-abort-rate">—</div><div class="kpi-icon">📉</div></div>
+        </div>
+
+        <div class="cancel-insight-grid mb-16">
+
+          <section class="cancel-visual-panel cause-panel">
+            <div class="cancel-panel-header">
+              <div>
+                <div class="cancel-panel-title">D-1 Appointment Cancellation Reason Breakdown</div>
+                <div class="cancel-panel-subtitle">Shows why booked appointments were cancelled before the visit date, with count and share</div>
+              </div>
+            </div>
+            <div id="pareto-chart" class="cause-constellation">
+              <div class="loading"><span class="spinner"></span></div>
+            </div>
+          </section>
+
+          <section class="cancel-visual-panel taxonomy-panel">
+            <div class="cancel-panel-header">
+              <div>
+                <div class="cancel-panel-title">Same-Day Appointment Abort Reason Breakdown</div>
+                <div class="cancel-panel-subtitle">Shows why appointments were aborted on the day of visit, with count and share</div>
+              </div>
+            </div>
+            <div id="category-chart" class="category-lens">
+              <div class="loading"><span class="spinner"></span></div>
+            </div>
+          </section>
+
+        </div>
+
+
+
+        <!-- Rebooking Recovery — Recovery Constellation -->
+        <div class="recovery-constellation-card">
+          <div class="recovery-constellation-header">
+            <div>
+              <div class="recovery-constellation-title">🔄 Appointment Rebooking Recovery by Region</div>
+              <div class="recovery-constellation-subtitle">How effectively each region recovers D-1 cancelled appointments through rebooking</div>
+            </div>
+            <div class="recovery-legend">
+              <span><i class="rleg-dot rebook"></i>Rebook rate</span>
+              <span><i class="rleg-dot success"></i>Success rate</span>
+              <span><i class="rleg-dot lag"></i>Avg lag (days)</span>
+            </div>
+          </div>
+          <div class="recovery-constellation-stage" id="recovery-constellation-stage">
+            <div class="loading"><span class="spinner"></span> Loading recovery data...</div>
+          </div>
+          <div class="recovery-detail-strip" id="recovery-detail-strip" style="display:none">
+            <div class="recovery-detail-region" id="rd-region">—</div>
+            <div class="recovery-detail-metrics">
+              <div><span>Rebook Rate</span><strong id="rd-rebook">—</strong></div>
+              <div><span>Avg Lag</span><strong id="rd-lag">—</strong></div>
+              <div><span>Success Rate</span><strong id="rd-success">—</strong></div>
+              <div><span>Recovery Score</span><strong id="rd-score">—</strong></div>
+            </div>
+            <div class="recovery-detail-insight" id="rd-insight">—</div>
+          </div>
+        </div>
+
+        <!-- Rebooking Recovery — Supplier Constellation -->
+        <div class="recovery-constellation-card mt-16" style="margin-top: 16px;">
+          <div class="recovery-constellation-header">
+            <div>
+              <div class="recovery-constellation-title">🔄 Appointment Rebooking Recovery by Supplier</div>
+              <div class="recovery-constellation-subtitle">How effectively top suppliers recover D-1 cancelled appointments through rebooking</div>
+            </div>
+            <div class="recovery-legend">
+              <span><i class="rleg-dot rebook"></i>Rebook rate</span>
+              <span><i class="rleg-dot success"></i>Success rate</span>
+              <span><i class="rleg-dot lag"></i>Avg lag (days)</span>
+            </div>
+          </div>
+          <div class="supplier-recovery-stage" id="supplier-recovery-stage" style="padding: 16px;">
+            <div class="loading"><span class="spinner"></span> Loading supplier recovery data...</div>
+          </div>
+        </div>
+
+        <section class="cancel-visual-panel combined-risk-panel mb-16">
+          <div class="combined-risk-grid">
+            <div class="combined-risk-pane">
+              <div class="combined-risk-pane-title">D-1 Cancellation Rate Trend and Forecast</div>
+              <div id="cancel-trend-chart" class="cancel-pulse">
+                <div class="loading"><span class="spinner"></span></div>
+              </div>
+            </div>
+            <div class="combined-risk-pane">
+              <div class="combined-risk-pane-title">Smart Meter Appointment Fallout Risk Prediction</div>
+              <div id="cancel-risk-panel" class="cancel-risk-prediction-body">
+                <div class="loading"><span class="spinner"></span></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div><!-- /view-cancellations -->
+
+
+      <!-- ════════════════════════════════════════════════════
+           MODULE 4 — FIELD OPERATIONS & ENGINEER PLANNING
+      ════════════════════════════════════════════════════════ -->
+      <div class="view resource-planning-page" id="view-field-ops">
+
+        <!-- Forecast KPIs -->
+        <div class="forecast-kpi-row">
+          <div class="kpi-grid forecast-kpi-grid" id="forecast-kpis">
+            <div class="kpi-card info"><div class="kpi-label">Contact Attempts</div><div class="kpi-value" id="fc-kpi-volume">—</div><div class="kpi-icon">📞</div></div>
+            <div class="kpi-card ok"><div class="kpi-label">Total Visits</div><div class="kpi-value" id="fc-kpi-bookings">—</div><div class="kpi-icon">📅</div></div>
+            <div class="kpi-card ok"><div class="kpi-label">Contact Attempt to Visit Rate</div><div class="kpi-value" id="fc-kpi-conversion">—</div><div class="kpi-icon">🎯</div></div>
+            <div class="kpi-card warn"><div class="kpi-label">Abandonment Rate</div><div class="kpi-value" id="fc-kpi-abandon">—</div><div class="kpi-icon">📵</div></div>
+          </div>
+          <div class="forecast-model-toggle-card">
+            <div class="forecast-toggle-label">Forecast Model</div>
+            <div class="forecast-model-toggle" id="forecast-model-toggle">
+              <button type="button" class="active" data-model="" onclick="setForecastModel('', this)">Ensemble P50</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="forecast-tab-panel active" id="ftab-forecast">
+          <div class="forecast-plan-grid mb-16">
+            <div class="card forecast-ensemble-card">
+              <div class="card-header">
+                <div>
+                  <div class="card-title" id="forecast-chart-title">📈 52-Week Smart Meter Contact Attempt Forecast</div>
+                  <div class="card-subtitle">2026 weekly contact-attempt forecast compared with 2025 same-week actuals, including P10, P50 and P90 planning bands</div>
+                </div>
+                <div class="card-actions">
+                  <div class="filter-bar">
+                    <select class="filter-select" id="forecast-channel-filter" onchange="loadForecast()">
+                      <option value="">All Channels</option>
+                      <option value="Phone">Phone</option>
+                      <option value="Web">Web</option>
+                      <option value="App">App</option>
+                      <option value="SMS">SMS</option>
+                      <option value="IVR">IVR</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="chart-wrap forecast-main-chart">
+                  <canvas id="forecast-chart"></canvas>
+                </div>
+              </div>
+            </div>
+            <div class="card model-accuracy-card">
+              <div class="card-header"><div class="card-title">🔬 Contact Attempt Forecast Model Accuracy</div></div>
+              <div class="card-body">
+                <div class="model-accuracy-board" id="model-accuracy-body">
+                  <div class="loading"><span class="spinner"></span></div>
+                </div>
+              </div>
+            </div>
+            <div class="card model-comparison-card">
+              <div class="card-header"><div class="card-title">📊 Forecast Comparison by Model</div></div>
+              <div class="card-body">
+                <div class="chart-wrap model-comparison-chart">
+                  <canvas id="model-comparison-chart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="resource-visual-grid mb-16">
+          <div class="card resource-forecast-card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">2026 Capacity Forecast from 2026 Appointments Booked</div>
+                <div class="card-subtitle">FTE required equals daily appointment load divided by jobs per FTE per day, adjusted for absent FTEs</div>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="chart-wrap chart-h-360">
+                <canvas id="capacity-forecast-chart"></canvas>
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+
+        <!-- Capacity Matrix -->
+        <div class="ops-tab-panel active" id="opstab-capacity">
+          <div class="card mb-16">
+            <div class="card-header">
+              <div><div class="card-title">Engineer Capacity vs Smart Meter Appointments Booked by Region</div></div>
+            </div>
+            <div class="card-body">
+              <div class="chart-wrap chart-h-360">
+                <canvas id="capacity-matrix-chart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- Optimisation -->
+        <div class="ops-tab-panel" id="opstab-optimise">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Resource Optimisation and Implementation</div>
+                <div class="card-subtitle">Tune the optimisation parameters, implement the recommended allocation, then restore the original plan when needed</div>
+              </div>
+              <div class="card-actions">
+                <button class="btn btn-primary btn-sm" onclick="loadOptimisation()">Run Optimisation</button>
+              </div>
+            </div>
+            <div class="card-body optimise-controls-body">
+              <div class="scenario-panel optimise-parameter-panel">
+                <div class="scenario-input-grid optimise-input-grid">
+                  <div class="form-group">
+                    <label class="form-label">Target Utilisation</label>
+                    <div class="range-wrap">
+                      <input class="form-range" type="range" id="opt-target" min="65" max="90" step="1" value="72" oninput="updateOptimiseRange('opt-target','opt-target-val','%')" />
+                      <span class="range-val" id="opt-target-val">72%</span>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Jobs / FTE / Day</label>
+                    <div class="range-wrap">
+                      <input class="form-range" type="range" id="opt-jobs-per-fte" min="1" max="5" step="0.25" value="4" oninput="updateOptimiseRange('opt-jobs-per-fte','opt-jobs-per-fte-val','')" onchange="loadCapacityForecast()" />
+                      <span class="range-val" id="opt-jobs-per-fte-val">4</span>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Absence Rate %</label>
+                    <div class="range-wrap">
+                      <input class="form-range" type="range" id="opt-absence-rate" min="0" max="10" step="0.5" value="4" oninput="updateOptimiseRange('opt-absence-rate','opt-absence-rate-val','%')" onchange="loadCapacityForecast()" />
+                      <span class="range-val" id="opt-absence-rate-val">4%</span>
+                    </div>
+                  </div>
+                </div>
+                <span class="text-muted fs-11" id="optimise-state-label">No optimisation applied</span>
+                <div class="optimise-action-row">
+                  <button class="btn btn-secondary btn-sm" id="optimise-implement-btn" onclick="implementOptimisation()" disabled>Implement</button>
+                  <button class="btn btn-danger btn-sm" id="optimise-revert-btn" onclick="revertOptimisation()" style="display:none">Revert</button>
+                </div>
+              </div>
+            </div>
+            <div class="card-body" id="optimise-body">
+              <div class="empty-state">
+                <div class="empty-icon">⚡</div>
+                <div class="empty-title">Click "Run Optimisation" to generate recommendations</div>
+                <div class="empty-desc">Analyses capacity gaps and recommends workforce rebalancing</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /view-field-ops -->
+
+
+      <!-- ════════════════════════════════════════════════════
+           MODULE 5 — FINANCIAL SCENARIO PLANNING
+      ════════════════════════════════════════════════════════ -->
+      <div class="view" id="view-financial">
+
+        <div class="kpi-grid" id="fin-kpis">
+          <div class="kpi-card ok"><div class="kpi-label">Total Revenue</div><div class="kpi-value" id="fin-kpi-revenue">—</div><div class="kpi-icon">💷</div></div>
+          <div class="kpi-card"><div class="kpi-label">Total Cost</div><div class="kpi-value" id="fin-kpi-cost">—</div><div class="kpi-icon">💸</div></div>
+          <div class="kpi-card ok"><div class="kpi-label">Gross Margin</div><div class="kpi-value" id="fin-kpi-margin">—</div><div class="kpi-icon">📈</div></div>
+          <div class="kpi-card"><div class="kpi-label">Margin %</div><div class="kpi-value" id="fin-kpi-margin-pct">—</div><div class="kpi-icon">%</div></div>
+          <div class="kpi-card"><div class="kpi-label">Cost Per Executed Appointment</div><div class="kpi-value" id="fin-kpi-cpp">—</div><div class="kpi-icon">🔧</div></div>
+        </div>
+
+        <div class="grid-2 mb-16">
+          <div class="card">
+            <div class="card-header"><div class="card-title">📊 Monthly Smart Meter Delivery Revenue vs Cost</div></div>
+            <div class="card-body">
+              <div class="chart-wrap chart-h-300">
+                <canvas id="fin-monthly-chart"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">🎯 Margin by Smart Meter Appointment Type</div></div>
+            <div class="card-body">
+              <div class="chart-wrap chart-h-300">
+                <canvas id="fin-jobtype-chart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scenario Builder -->
+        <div class="card mb-16">
+          <div class="card-header">
+            <div><div class="card-title">⚙️ Appointment and Resource Financial Scenario Builder</div><div class="card-subtitle">Adjust appointment volume, success rates and engineer capacity to simulate P&L outcomes</div></div>
+            <div class="card-actions">
+              <button class="btn btn-secondary btn-sm" onclick="resetScenario()">Reset</button>
+              <button class="btn btn-primary" onclick="runScenario()">▶ Run Scenario</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="scenario-input-grid">
+              <div class="form-group">
+                <label class="form-label">Scenario Name</label>
+                <input class="form-input" type="text" id="sc-name" value="Base Case 2026" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Appointments Booked</label>
+                <input class="form-input" type="number" id="sc-volume" value="85000" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Success Rate %</label>
+                <div class="range-wrap">
+                  <input class="form-range" type="range" id="sc-completion" min="50" max="90" value="68" step="1" oninput="updateRangeVal('sc-completion','sc-completion-val','%')" />
+                  <span class="range-val" id="sc-completion-val">68%</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">D-1 Cancellation Rate %</label>
+                <div class="range-wrap">
+                  <input class="form-range" type="range" id="sc-cancel" min="0" max="35" value="15" step="1" oninput="updateRangeVal('sc-cancel','sc-cancel-val','%')" />
+                  <span class="range-val" id="sc-cancel-val">15%</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Same-Day Abort Rate %</label>
+                <div class="range-wrap">
+                  <input class="form-range" type="range" id="sc-abort" min="0" max="25" value="8" step="1" oninput="updateRangeVal('sc-abort','sc-abort-val','%')" />
+                  <span class="range-val" id="sc-abort-val">8%</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Revenue Uplift %</label>
+                <div class="range-wrap">
+                  <input class="form-range" type="range" id="sc-revenue-uplift" min="-20" max="20" value="0" step="1" oninput="updateRangeVal('sc-revenue-uplift','sc-rev-val','%')" />
+                  <span class="range-val" id="sc-rev-val">0%</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Cost Change %</label>
+                <div class="range-wrap">
+                  <input class="form-range" type="range" id="sc-cost-uplift" min="-20" max="20" value="0" step="1" oninput="updateRangeVal('sc-cost-uplift','sc-cost-val','%')" />
+                  <span class="range-val" id="sc-cost-val">0%</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Engineer Count</label>
+                <input class="form-input" type="number" id="sc-engineers" value="300" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scenario Results -->
+        <div class="card mb-16" id="scenario-results" style="display:none">
+          <div class="card-header">
+            <div><div class="card-title" id="sc-result-title">Appointment Scenario Results</div></div>
+          </div>
+          <div class="card-body">
+            <div class="grid-2">
+              <div>
+                <div class="kpi-grid" style="grid-template-columns:1fr 1fr; gap:10px; margin-bottom:0">
+                  <div class="kpi-card ok"><div class="kpi-label">Revenue</div><div class="kpi-value" id="sc-res-revenue">—</div><div class="kpi-icon">💷</div></div>
+                  <div class="kpi-card"><div class="kpi-label">Total Cost</div><div class="kpi-value" id="sc-res-cost">—</div><div class="kpi-icon">💸</div></div>
+                  <div class="kpi-card ok"><div class="kpi-label">Margin</div><div class="kpi-value" id="sc-res-margin">—</div><div class="kpi-icon">📈</div></div>
+                  <div class="kpi-card"><div class="kpi-label">Margin %</div><div class="kpi-value" id="sc-res-margin-pct">—</div><div class="kpi-icon">%</div></div>
+                  <div class="kpi-card"><div class="kpi-label">Cost/Executed Appointment</div><div class="kpi-value" id="sc-res-cpp">—</div><div class="kpi-icon">🔧</div></div>
+                  <div class="kpi-card"><div class="kpi-label">Capacity Status</div><div class="kpi-value" id="sc-res-capacity">—</div><div class="kpi-icon">⚡</div></div>
+                </div>
+              </div>
+              <div class="chart-wrap chart-h-260">
+                <canvas id="waterfall-chart"></canvas>
+              </div>
+            </div>
+
+            <!-- Pricing & Cost Assumptions -->
+            <div class="sc-assumptions" id="sc-assumptions">
+              <div class="sc-assumptions-header">
+                <span class="sc-assumptions-title">Pricing &amp; Cost Assumptions</span>
+                <span class="sc-assumptions-note">Rate card applied to derive revenue, cost and margin above</span>
+              </div>
+              <div class="sc-assumptions-grid">
+                <div>
+                  <div class="sc-table-label">Revenue by Appointment Type</div>
+                  <table class="data-table" id="sc-revenue-breakdown">
+                    <thead><tr><th>Appointment Type</th><th>Mix</th><th>Executed Successfully</th><th>Rate/Executed Appointment</th><th>Total Revenue</th></tr></thead>
+                    <tbody></tbody>
+                    <tfoot></tfoot>
+                  </table>
+                </div>
+                <div>
+                  <div class="sc-table-label">Cost by Appointment Type</div>
+                  <table class="data-table" id="sc-cost-breakdown">
+                    <thead><tr><th>Category</th><th>Executed Successfully</th><th>Rate/Executed Appointment</th><th>Total Cost</th></tr></thead>
+                    <tbody></tbody>
+                    <tfoot></tfoot>
+                  </table>
+                </div>
+              </div>
+              <div class="sc-formula-note" id="sc-formula-note"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2026 Forecast Profitability -->
+        <div class="card">
+          <div class="card-header"><div class="card-title">🔮 Forecast Profitability from Planned Appointments Booked</div></div>
+          <div class="card-body">
+            <div class="chart-wrap chart-h-300">
+              <canvas id="forecast-profit-chart"></canvas>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /view-financial -->
+
+    </div><!-- /page-content -->
+  </main>
+</div><!-- /app-shell -->
+
+<div class="chatbot-widget" id="chatbot-widget">
+  <section class="chatbot-window" id="chatbot-window" aria-label="IMSERV chatbot">
+    <div class="chatbot-header">
+      <div class="chatbot-title-wrap">
+        <span class="chatbot-title-icon" id="chatbot-title-icon" aria-hidden="true"></span>
+        <div>
+          <div class="chatbot-title">IMSERV Assistant</div>
+          <div class="chatbot-status" id="chatbot-status">Hugging Face LLM</div>
+        </div>
+      </div>
+      <button type="button" class="chatbot-close" onclick="toggleChatbot(false)" title="Close chatbot" aria-label="Close chatbot">
+        <span id="chatbot-close-icon" aria-hidden="true"></span>
+      </button>
+    </div>
+    <div class="chatbot-messages" id="chatbot-messages">
+      <div class="chatbot-message assistant">
+        <div class="chatbot-bubble">Hi, I can help explain the IMSERV dashboards, KPIs, forecasts, risk signals, resource plans and scenario outputs.</div>
+      </div>
+    </div>
+    <div class="chatbot-suggestions" aria-label="Suggested chatbot questions">
+      <button type="button" class="chatbot-suggestion" data-question="What does success rate mean?">Success rate</button>
+      <button type="button" class="chatbot-suggestion" data-question="Which KPI needs attention on this page?">KPI attention</button>
+      <button type="button" class="chatbot-suggestion" data-question="Explain D-1 cancellations and same-day aborts in simple terms.">D-1 vs same-day</button>
+      <button type="button" class="chatbot-suggestion" data-question="How should I use the contact attempt forecast?">Contact forecast</button>
+      <button type="button" class="chatbot-suggestion" data-question="What does resource planning show?">Resource planning</button>
+      <button type="button" class="chatbot-suggestion" data-question="How do scenario impacts affect margin?">Scenario impact</button>
+    </div>
+    <form class="chatbot-input-row" id="chatbot-form" onsubmit="sendChatbotMessage(event)">
+      <textarea id="chatbot-input" rows="1" placeholder="Ask about this app..." aria-label="Message"></textarea>
+      <button type="submit" class="chatbot-send" id="chatbot-send" title="Send message" aria-label="Send message">
+        <span id="chatbot-send-icon" aria-hidden="true"></span>
+      </button>
+    </form>
+  </section>
+  <button type="button" class="chatbot-launcher" id="chatbot-launcher" onclick="toggleChatbot()" aria-expanded="false" aria-controls="chatbot-window" title="Open chatbot">
+    <span id="chatbot-launcher-icon" aria-hidden="true"></span>
+  </button>
+</div>
+
+<!-- ──────────────────────────────────────────────────────────
+     AI PANEL MODAL
+────────────────────────────────────────────────────────────── -->
+<div class="modal-overlay" id="ai-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">AI Operational Intelligence</div>
+      <div class="modal-close" onclick="closeAiPanel()">✕</div>
+    </div>
+    <div class="modal-body" id="ai-modal-body">
+      <div class="loading"><span class="spinner"></span> Generating insights...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ──────────────────────────────────────────────────────────
+     JAVASCRIPT MODULES
+────────────────────────────────────────────────────────────── -->
+<script src="/static/js/theme.js?v=2"></script>
+<script src="/static/js/config.js?v=2"></script>
+<script src="/static/js/dashboard.js?v=2"></script>
+<script src="/static/js/forecasting.js?v=2"></script>
+<script src="/static/js/cancellations.js?v=2"></script>
+<script src="/static/js/field_ops.js?v=2"></script>
+<script src="/static/js/financial.js?v=2"></script>
+<script src="/static/js/app.js?v=2"></script>
+
+</body>
+</html>

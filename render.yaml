@@ -1,0 +1,41 @@
+services:
+  - type: web
+    name: imserv-platform
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn --bind 0.0.0.0:$PORT --workers 1 --threads 2 --timeout 120 --max-requests 150 --max-requests-jitter 30 app:app"
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ENABLE_AI_RECOMMENDATIONS
+        value: "false"
+      - key: ENABLE_DATABASE
+        value: "false"
+      - key: HF_TOKEN
+        sync: false
+      - key: HF_CHAT_PROVIDER
+        value: novita
+      - key: HF_CHAT_MODEL
+        value: google/gemma-4-31B-it
+      - key: HF_CHAT_BASE_URL
+        value: https://router.huggingface.co/v1
+      - key: HF_CHAT_TIMEOUT_SECONDS
+        value: "45"
+      - key: HF_CHAT_MAX_TOKENS
+        value: "450"
+      - key: HF_CHAT_TEMPERATURE
+        value: "0.35"
+      - key: IMSERV_CACHE_LARGE_DATASETS
+        value: "false"
+      - key: IMSERV_AUTO_GENERATE_DATA
+        value: "false"
+      - key: MALLOC_ARENA_MAX
+        value: "2"
+      - key: PYTHONUNBUFFERED
+        value: "1"
+      - key: PORT
+        value: "5000"
+    healthCheckPath: /api/health
+    autoDeploy: true
