@@ -1,1 +1,1 @@
-# IMSERV Analytics Engine Package
+﻿# Smart Meter Journey analytics engine package

@@ -1,1 +1,1 @@
-# IMSERV API Blueprint Package
+﻿# Smart Meter Journey API blueprint package

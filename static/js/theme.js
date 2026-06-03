@@ -1,25 +1,25 @@
-/* IMSERV - Theme Manager */
+﻿/* SMJ - Theme Manager */
 (function () {
   const html = document.documentElement;
-  const themeVersion = 'imserv-json-theme-v1';
-  if (localStorage.getItem('imserv-theme-version') !== themeVersion) {
-    localStorage.setItem('imserv-theme', 'light');
-    localStorage.setItem('imserv-theme-version', themeVersion);
+  const themeVersion = 'SMJ-json-theme-v1';
+  if (localStorage.getItem('SMJ-theme-version') !== themeVersion) {
+    localStorage.setItem('SMJ-theme', 'dark');
+    localStorage.setItem('SMJ-theme-version', themeVersion);
   }
-  const stored = localStorage.getItem('imserv-theme') || 'light';
+  const stored = localStorage.getItem('SMJ-theme') || 'dark';
   html.setAttribute('data-theme', stored);
 
   window.toggleTheme = function () {
-    const current = html.getAttribute('data-theme') || 'light';
+    const current = html.getAttribute('data-theme') || 'dark';
     const next = current === 'dark' ? 'light' : 'dark';
     html.setAttribute('data-theme', next);
-    localStorage.setItem('imserv-theme', next);
-    window.IMSERV?.applyChartTheme?.(next);
+    localStorage.setItem('SMJ-theme', next);
+    window.SMJ?.applyChartTheme?.(next);
 
     const icon = document.getElementById('theme-icon');
-    if (icon && window.IMSERV?.setElementIcon) {
+    if (icon && window.SMJ?.setElementIcon) {
       delete icon.dataset.iconReady;
-      IMSERV.setElementIcon(icon, next === 'dark' ? 'moon' : 'sun');
+      SMJ.setElementIcon(icon, next === 'dark' ? 'moon' : 'sun');
     } else if (icon) {
       icon.textContent = next === 'dark' ? 'Dark' : 'Light';
     }

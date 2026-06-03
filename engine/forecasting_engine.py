@@ -1,5 +1,5 @@
-"""
-IMSERV Platform — Contact Centre Forecasting Engine
+﻿"""
+Smart Meter Journey â€” Contact Centre Forecasting Engine
 Multi-model ensemble: Prophet, ARIMA, XGBoost, LightGBM.
 Mirrors DAA's modular ML architecture pattern.
 """
@@ -16,7 +16,7 @@ from engine.ingestion import (
     to_int, to_float, safe_pct
 )
 
-# ─────────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 _FORECAST_CACHE = {}
 
 MODELS = ["Prophet", "ARIMA", "XGBoost", "LightGBM"]
@@ -84,7 +84,7 @@ INTERACTION_ROUTE_RULES = [
     },
 ]
 
-# ─── Seasonal Helpers ─────────────────────────────────────────────────────────
+# â”€â”€â”€ Seasonal Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def _seasonal_index(week: int, amplitude: float = 0.18) -> float:
     return 1.0 + amplitude * math.sin(2 * math.pi * (week - 26) / 52)
@@ -95,7 +95,7 @@ def _trend_factor(week_idx: int, growth_rate: float = 0.04) -> float:
     return 1.0 + growth_rate * (week_idx / 52)
 
 
-# ─── Model Simulators ─────────────────────────────────────────────────────────
+# â”€â”€â”€ Model Simulators â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def _prophet_forecast(history: list, horizon_weeks: int, growth: float = 0.04) -> list:
     """Simplified Prophet-style: trend + seasonal + noise."""
@@ -289,7 +289,7 @@ def _beginning_2025_forecast_accuracy(year: int = 2025) -> dict:
     }
 
 
-# ─── Public API ───────────────────────────────────────────────────────────────
+# â”€â”€â”€ Public API â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def forecast_channel_volume(
     region_code: str = None,

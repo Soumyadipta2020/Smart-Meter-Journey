@@ -1,7 +1,7 @@
--- IMSERV Platform — PostgreSQL Schema
+﻿-- Smart Meter Journey - PostgreSQL Schema
 -- Extends DAA file-based architecture with persistent relational storage
 
--- ─── Core Reference Tables ────────────────────────────────────────────────────
+-- â”€â”€â”€ Core Reference Tables â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 CREATE TABLE IF NOT EXISTS regions (
     id          SERIAL PRIMARY KEY,
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS job_types (
     cost_gbp        NUMERIC(10,2)
 );
 
--- ─── Smart Meter Jobs ─────────────────────────────────────────────────────────
+-- â”€â”€â”€ Smart Meter Jobs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 CREATE TABLE IF NOT EXISTS smart_meter_jobs (
     id              BIGSERIAL PRIMARY KEY,
@@ -54,7 +54,7 @@ CREATE INDEX idx_smj_status    ON smart_meter_jobs(status);
 CREATE INDEX idx_smj_booked    ON smart_meter_jobs(booked_date);
 CREATE INDEX idx_smj_engineer  ON smart_meter_jobs(engineer_id);
 
--- ─── Contact Centre ───────────────────────────────────────────────────────────
+-- â”€â”€â”€ Contact Centre â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 CREATE TABLE IF NOT EXISTS channel_contacts (
     id              BIGSERIAL PRIMARY KEY,
@@ -73,7 +73,7 @@ CREATE TABLE IF NOT EXISTS channel_contacts (
 CREATE INDEX idx_cc_date    ON channel_contacts(contact_date);
 CREATE INDEX idx_cc_channel ON channel_contacts(channel);
 
--- ─── Engineer Workforce ───────────────────────────────────────────────────────
+-- â”€â”€â”€ Engineer Workforce â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 CREATE TABLE IF NOT EXISTS engineers (
     id              SERIAL PRIMARY KEY,
@@ -103,7 +103,7 @@ CREATE TABLE IF NOT EXISTS engineer_availability (
 CREATE INDEX idx_ea_date      ON engineer_availability(avail_date);
 CREATE INDEX idx_ea_engineer  ON engineer_availability(engineer_id);
 
--- ─── Forecasting Storage ──────────────────────────────────────────────────────
+-- â”€â”€â”€ Forecasting Storage â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 CREATE TABLE IF NOT EXISTS forecasts (
     id              BIGSERIAL PRIMARY KEY,
@@ -124,7 +124,7 @@ CREATE TABLE IF NOT EXISTS forecasts (
 CREATE INDEX idx_fcst_type ON forecasts(forecast_type);
 CREATE INDEX idx_fcst_date ON forecasts(forecast_date);
 
--- ─── Financial Scenarios ──────────────────────────────────────────────────────
+-- â”€â”€â”€ Financial Scenarios â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 CREATE TABLE IF NOT EXISTS financial_scenarios (
     id              BIGSERIAL PRIMARY KEY,
@@ -142,7 +142,7 @@ CREATE TABLE IF NOT EXISTS financial_scenarios (
     created_at      TIMESTAMPTZ DEFAULT NOW()
 );
 
--- ─── AI Recommendations ───────────────────────────────────────────────────────
+-- â”€â”€â”€ AI Recommendations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 CREATE TABLE IF NOT EXISTS ai_recommendations (
     id              BIGSERIAL PRIMARY KEY,
@@ -159,7 +159,7 @@ CREATE TABLE IF NOT EXISTS ai_recommendations (
     expires_at      TIMESTAMPTZ
 );
 
--- ─── Audit Trail ─────────────────────────────────────────────────────────────
+-- â”€â”€â”€ Audit Trail â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 CREATE TABLE IF NOT EXISTS audit_log (
     id              BIGSERIAL PRIMARY KEY,
@@ -172,7 +172,7 @@ CREATE TABLE IF NOT EXISTS audit_log (
     new_values      JSONB
 );
 
--- ─── Reference Data Seed ──────────────────────────────────────────────────────
+-- â”€â”€â”€ Reference Data Seed â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 INSERT INTO regions (code, name) VALUES
     ('NW',  'North West'),

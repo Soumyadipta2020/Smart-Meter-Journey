@@ -1,19 +1,19 @@
-/* IMSERV - Module 3: Appointment Fallout */
+﻿/* SMJ - Module 3: Appointment Fallout */
 
 async function loadCancellationsDashboard() {
-  const region = IMSERV.getRegion();
-  const year = IMSERV.getYear();
+  const region = SMJ.getRegion();
+  const year = SMJ.getYear();
   const qs = `?region=${region}&year=${year}`;
   const riskQs = region ? `?region=${region}` : '';
   const loadingTargets = ['pareto-chart', 'category-chart', 'recovery-constellation-stage', 'cancel-trend-chart', 'cancel-risk-panel'];
-  IMSERV.setLoading(loadingTargets, true);
+  SMJ.setLoading(loadingTargets, true);
 
   try {
     const [kpis, rootCauses, rebook, cancelTrends] = await Promise.all([
-      IMSERV.apiFetch('/api/cancellations/kpis' + qs),
-      IMSERV.apiFetch('/api/cancellations/root-causes' + qs),
-      IMSERV.apiFetch('/api/cancellations/rebooking' + qs),
-      IMSERV.apiFetch('/api/cancellations/trends' + riskQs),
+      SMJ.apiFetch('/api/cancellations/kpis' + qs),
+      SMJ.apiFetch('/api/cancellations/root-causes' + qs),
+      SMJ.apiFetch('/api/cancellations/rebooking' + qs),
+      SMJ.apiFetch('/api/cancellations/trends' + riskQs),
     ]);
 
     if (kpis) renderCancelKPIs(kpis);
@@ -26,7 +26,7 @@ async function loadCancellationsDashboard() {
     if (cancelTrends) renderCancelTrend(cancelTrends);
     await loadCancellationRisk(false);
   } finally {
-    IMSERV.setLoading(loadingTargets, false);
+    SMJ.setLoading(loadingTargets, false);
   }
 }
 
@@ -35,10 +35,10 @@ function renderCancelKPIs(kpis) {
     const el = document.getElementById(id);
     if (el) el.textContent = v;
   };
-  set('can-kpi-total', IMSERV.fmt.num(kpis.cancellations));
-  set('can-kpi-rate', IMSERV.fmt.pct(kpis.cancel_rate_pct));
-  set('can-kpi-aborts', IMSERV.fmt.num(kpis.aborts));
-  set('can-kpi-abort-rate', IMSERV.fmt.pct(kpis.abort_rate_pct));
+  set('can-kpi-total', SMJ.fmt.num(kpis.cancellations));
+  set('can-kpi-rate', SMJ.fmt.pct(kpis.cancel_rate_pct));
+  set('can-kpi-aborts', SMJ.fmt.num(kpis.aborts));
+  set('can-kpi-abort-rate', SMJ.fmt.pct(kpis.abort_rate_pct));
 }
 
 function cancelEscape(value) {
@@ -92,7 +92,7 @@ function renderReasonBreakdown(container, rows, total, config) {
     let segmentsHtml = '';
     let combinedTooltip = '';
     if (r.suppliers && r.suppliers.length > 0) {
-      combinedTooltip = r.suppliers.map(sup => `${cancelEscape(sup.name)}: ${IMSERV.fmt.num(sup.count)}`).join('&#10;');
+      combinedTooltip = r.suppliers.map(sup => `${cancelEscape(sup.name)}: ${SMJ.fmt.num(sup.count)}`).join('&#10;');
       segmentsHtml = r.suppliers.map((sup, sIdx) => {
         const w = (sup.count / Math.max(r.count, 1)) * 100;
         const bg = sup.name === 'Others' ? '#bdc3c7' : supplierColors[sIdx % supplierColors.length];
@@ -109,8 +109,8 @@ function renderReasonBreakdown(container, rows, total, config) {
           <i><b style="display: flex; background: none;">${segmentsHtml}</b></i>
         </div>
         <div class="reason-breakdown-metric">
-          <strong>${IMSERV.fmt.num(r.count)}</strong>
-          <small>${IMSERV.fmt.pct(r.pct)}</small>
+          <strong>${SMJ.fmt.num(r.count)}</strong>
+          <small>${SMJ.fmt.pct(r.pct)}</small>
         </div>
       </div>
     `;
@@ -120,8 +120,8 @@ function renderReasonBreakdown(container, rows, total, config) {
     <div class="reason-breakdown ${config.tone}">
       <div class="reason-breakdown-total">
         <span>${cancelEscape(config.totalLabel)}</span>
-        <strong>${IMSERV.fmt.num(total)}</strong>
-        <em>${IMSERV.fmt.num(top.length)} reasons shown</em>
+        <strong>${SMJ.fmt.num(total)}</strong>
+        <em>${SMJ.fmt.num(top.length)} reasons shown</em>
       </div>
       <div class="reason-breakdown-list">
         ${rowsHtml}
@@ -129,8 +129,8 @@ function renderReasonBreakdown(container, rows, total, config) {
     </div>
     <div class="cause-summary-strip">
       <div><span>Top reason</span><strong>${cancelEscape(top[0].reason)}</strong></div>
-      <div><span>Top reason rate</span><strong>${IMSERV.fmt.pct(topShare)}</strong></div>
-      <div><span>Shown volume</span><strong>${IMSERV.fmt.num(top.reduce((sum, r) => sum + r.count, 0))}</strong></div>
+      <div><span>Top reason rate</span><strong>${SMJ.fmt.pct(topShare)}</strong></div>
+      <div><span>Shown volume</span><strong>${SMJ.fmt.num(top.reduce((sum, r) => sum + r.count, 0))}</strong></div>
     </div>
   `;
 }
@@ -175,7 +175,7 @@ function renderCancelTrend(data) {
   const nodes = all.map((t, idx) => {
     const p = point(t.cancel_rate, idx, all.length);
     const isForecast = idx >= actuals.length;
-    return `<span class="pulse-node ${isForecast ? 'forecast' : ''}" style="--x:${p.x}%; --y:${p.y}%;" title="${cancelEscape(t.month)} ${IMSERV.fmt.pct(t.cancel_rate)}"></span>`;
+    return `<span class="pulse-node ${isForecast ? 'forecast' : ''}" style="--x:${p.x}%; --y:${p.y}%;" title="${cancelEscape(t.month)} ${SMJ.fmt.pct(t.cancel_rate)}"></span>`;
   }).join('');
 
   const latest = actuals[actuals.length - 1] || all[all.length - 1];
@@ -193,7 +193,7 @@ function renderCancelTrend(data) {
       ${nodes}
       <div class="pulse-readout">
         <span>Latest Actual</span>
-        <strong>${IMSERV.fmt.pct(latest.cancel_rate)}</strong>
+        <strong>${SMJ.fmt.pct(latest.cancel_rate)}</strong>
         <em>${cancelEscape(latest.month)}</em>
       </div>
       <div class="pulse-forecast-badge ${driftLabel.toLowerCase()}">
@@ -225,9 +225,9 @@ function renderCancelRegional(data) {
         </div>
         <div class="region-risk-copy">
           <span>Appointment fallout pressure</span>
-          <strong>${IMSERV.fmt.pct(loss)}</strong>
-          <em><b>${IMSERV.fmt.pct(r.cancel_rate)}</b> D-1 cancelled</em>
-          <em><b>${IMSERV.fmt.pct(r.abort_rate)}</b> same-day aborted</em>
+          <strong>${SMJ.fmt.pct(loss)}</strong>
+          <em><b>${SMJ.fmt.pct(r.cancel_rate)}</b> D-1 cancelled</em>
+          <em><b>${SMJ.fmt.pct(r.abort_rate)}</b> same-day aborted</em>
         </div>
         <small>#${idx + 1}</small>
       </div>
@@ -238,12 +238,12 @@ function renderCancelRegional(data) {
 }
 
 async function loadCancellationRisk(showLoading = true) {
-  const region = IMSERV.getRegion();
-  if (showLoading) IMSERV.setLoading('cancel-risk-panel', true);
-  const data = await IMSERV.apiFetch('/api/cancellations/predict' + (region ? `?region=${region}` : ''));
+  const region = SMJ.getRegion();
+  if (showLoading) SMJ.setLoading('cancel-risk-panel', true);
+  const data = await SMJ.apiFetch('/api/cancellations/predict' + (region ? `?region=${region}` : ''));
   const panel = document.getElementById('cancel-risk-panel');
   if (!panel || !data) {
-    if (showLoading) IMSERV.setLoading('cancel-risk-panel', false);
+    if (showLoading) SMJ.setLoading('cancel-risk-panel', false);
     return;
   }
 
@@ -286,8 +286,8 @@ async function loadCancellationRisk(showLoading = true) {
 
       <div class="risk-prediction-detail">
         <div class="risk-metric-grid">
-          <div><span>D-1 Cancellation Rate</span><strong>${IMSERV.fmt.pct(data.cancel_rate)}</strong></div>
-          <div><span>Same-Day Abort Rate</span><strong>${IMSERV.fmt.pct(data.abort_rate)}</strong></div>
+          <div><span>D-1 Cancellation Rate</span><strong>${SMJ.fmt.pct(data.cancel_rate)}</strong></div>
+          <div><span>Same-Day Abort Rate</span><strong>${SMJ.fmt.pct(data.abort_rate)}</strong></div>
           <div><span>Trend</span><strong style="color:${trendColor};">${cancelEscape(data.trend_direction)} <small>${trendIcon}</small></strong></div>
         </div>
         <div class="risk-recommendation">
@@ -303,10 +303,10 @@ async function loadCancellationRisk(showLoading = true) {
       </div>
     </div>
   `;
-  if (showLoading) IMSERV.setLoading('cancel-risk-panel', false);
+  if (showLoading) SMJ.setLoading('cancel-risk-panel', false);
 }
 
-/* ── Recovery Constellation ───────────────────────────────── */
+/* â”€â”€ Recovery Constellation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 // Singleton tooltip element shared across all constellation nodes
 let _rcTooltip = null;
@@ -366,8 +366,8 @@ function showRcTooltip(node, svgEl, evt) {
     </div>
     <div class="rct-row">
       <span class="rct-dot fast"></span>
-      <span class="rct-label">Fast Rebooks (&lt;½ lag)</span>
-      <strong class="rct-val">${node.fast_rebook_pct ?? '—'}%</strong>
+      <span class="rct-label">Fast Rebooks (&lt;Â½ lag)</span>
+      <strong class="rct-val">${node.fast_rebook_pct ?? 'â€”'}%</strong>
     </div>
     <div class="rct-bar-wrap">
       <div class="rct-bar-track">
@@ -414,7 +414,7 @@ function renderRebooking(data) {
     return;
   }
 
-  // Composite recovery score: rebook rate × 0.45 + success × 0.40 + lag speed bonus × 0.15
+  // Composite recovery score: rebook rate Ã— 0.45 + success Ã— 0.40 + lag speed bonus Ã— 0.15
   const scored = rows.map(r => {
     const lagPenalty = Math.max(0, 1 - (r.avg_rebook_lag_days - 8) / 20);
     const score = Math.round(r.rebook_rate_pct * 0.45 + r.rebook_success_pct * 0.40 + lagPenalty * 15);
@@ -445,11 +445,11 @@ function renderRebooking(data) {
         <span class="rc-card-score">${r.score}</span>
         <span class="rc-card-region">${cancelEscape(r.region_code)}</span>
         <span class="rc-card-status">${tone === 'strong' ? 'Strong' : tone === 'steady' ? 'Recovering' : 'At risk'}</span>
-        <span class="rc-card-count"><b>${IMSERV.fmt.num(r.rebooked_count)}</b> / ${IMSERV.fmt.num(r.total_cancellations)}</span>
+        <span class="rc-card-count"><b>${SMJ.fmt.num(r.rebooked_count)}</b> / ${SMJ.fmt.num(r.total_cancellations)}</span>
         <span class="rc-card-lag">${r.avg_rebook_lag_days}d lag</span>
         <span class="rc-card-bar rebook"><i></i><em>Rebook ${r.rebook_rate_pct}%</em></span>
         <span class="rc-card-bar success"><i></i><em>Success ${r.rebook_success_pct}%</em></span>
-        <span class="rc-card-meta">${IMSERV.fmt.num(r.completed_rebooks)} executed successfully</span>
+        <span class="rc-card-meta">${SMJ.fmt.num(r.completed_rebooks)} executed successfully</span>
       </button>
     `;
   }).join('');
@@ -590,7 +590,7 @@ function renderRebooking(data) {
       <text class="rc-score-label" x="${nd.x.toFixed(2)}" y="${(nd.y + (nd.y > cy ? 10.6 : -10.6)).toFixed(2)}"
             text-anchor="middle" fill="${nColor}" style="animation-delay:${delay}ms">${nd.score}</text>
       <text class="rc-mini-rebook" x="${nd.x.toFixed(2)}" y="${(nd.y + (nd.y > cy ? 13 : -13)).toFixed(2)}"
-            text-anchor="middle" style="animation-delay:${delay + 60}ms">${nd.rebooked_count ?? '—'}/${nd.total_cancellations ?? '—'}</text>
+            text-anchor="middle" style="animation-delay:${delay + 60}ms">${nd.rebooked_count ?? 'â€”'}/${nd.total_cancellations ?? 'â€”'}</text>
       <text class="rc-mini-lag" x="${nd.x.toFixed(2)}" y="${(nd.y + (nd.y > cy ? 15.2 : -15.2)).toFixed(2)}"
             text-anchor="middle" style="animation-delay:${delay + 80}ms">${nd.avg_rebook_lag_days}d lag</text>
     `;
@@ -607,7 +607,7 @@ function renderRebooking(data) {
     <text class="rc-core-sub"  x="${cx}" y="${(cy + 3).toFixed(2)}" text-anchor="middle">SCORE</text>
   `;
 
-  // Keep a sorted copy for ranking — sort scored BEFORE building HTML
+  // Keep a sorted copy for ranking â€” sort scored BEFORE building HTML
   const ranked = [...scored].sort((a, b) => b.score - a.score);
 
   stage.innerHTML = `
@@ -635,11 +635,11 @@ function renderRebooking(data) {
           </div>
         `).join('')}
       </div>
-      <div class="rc-hint">Hover to inspect · Click to pin</div>
+      <div class="rc-hint">Hover to inspect Â· Click to pin</div>
     </div>
   `;
 
-  // ── Events: hover = tooltip, click = pin detail strip ────────
+  // â”€â”€ Events: hover = tooltip, click = pin detail strip â”€â”€â”€â”€â”€â”€â”€â”€
   const svgEl = stage.querySelector('.rc-svg');
 
   stage.querySelectorAll('.rc-hit').forEach(el => {
@@ -661,16 +661,16 @@ function renderRebooking(data) {
       const sc      = r.score;
       const scColor = sc >= 70 ? '#028178' : sc >= 50 ? '#F4D25A' : '#FB8281';
       const insight = sc >= 70
-        ? `Strong recovery pipeline. ${cancelEscape(r.region_code)} converts D-1 cancelled appointments efficiently — ${r.completed_rebooks ?? '—'} rebooks executed successfully.`
+        ? `Strong recovery pipeline. ${cancelEscape(r.region_code)} converts D-1 cancelled appointments efficiently â€” ${r.completed_rebooks ?? 'â€”'} rebooks executed successfully.`
         : sc >= 50
-        ? `Moderate recovery. ${cancelEscape(r.region_code)} rebooked ${r.rebooked_count ?? '—'} of ${r.total_cancellations ?? '—'} D-1 cancelled appointments but success rate needs improvement.`
-        : `Recovery at risk. Only ${r.rebooked_count ?? '—'} of ${r.total_cancellations ?? '—'} D-1 cancelled appointments were rebooked — targeted outreach recommended.`;
+        ? `Moderate recovery. ${cancelEscape(r.region_code)} rebooked ${r.rebooked_count ?? 'â€”'} of ${r.total_cancellations ?? 'â€”'} D-1 cancelled appointments but success rate needs improvement.`
+        : `Recovery at risk. Only ${r.rebooked_count ?? 'â€”'} of ${r.total_cancellations ?? 'â€”'} D-1 cancelled appointments were rebooked â€” targeted outreach recommended.`;
 
       const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
       set('rd-region',  r.region_code);
-      set('rd-rebook',  `${r.rebooked_count ?? '—'} / ${r.total_cancellations ?? '—'} (${r.rebook_rate_pct}%)`);
+      set('rd-rebook',  `${r.rebooked_count ?? 'â€”'} / ${r.total_cancellations ?? 'â€”'} (${r.rebook_rate_pct}%)`);
       set('rd-lag',     `${r.avg_rebook_lag_days} days`);
-      set('rd-success', `${r.completed_rebooks ?? '—'} executed successfully (${r.rebook_success_pct}%)`);
+      set('rd-success', `${r.completed_rebooks ?? 'â€”'} executed successfully (${r.rebook_success_pct}%)`);
       set('rd-score',   sc);
       const scoreEl = document.getElementById('rd-score');
       if (scoreEl) scoreEl.style.color = scColor;
@@ -703,7 +703,7 @@ function renderSupplierRebooking(data) {
         <div class="rc-supplier-header">
           <div class="rc-supplier-rank">#${i + 1}</div>
           <div class="rc-supplier-name" title="${cancelEscape(r.supplier_name)}">${cancelEscape(r.supplier_name)}</div>
-          <div class="rc-supplier-volume">${IMSERV.fmt.num(r.rebooked_count)} / ${IMSERV.fmt.num(r.total_cancellations)}</div>
+          <div class="rc-supplier-volume">${SMJ.fmt.num(r.rebooked_count)} / ${SMJ.fmt.num(r.total_cancellations)}</div>
         </div>
         <div class="rc-supplier-main-metric">
           <div class="rc-supplier-main-metric-label">

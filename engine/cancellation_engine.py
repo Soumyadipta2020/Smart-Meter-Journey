@@ -1,5 +1,5 @@
-"""
-IMSERV Platform — Cancellation & Abort Analytics Engine
+﻿"""
+Smart Meter Journey â€” Cancellation & Abort Analytics Engine
 Root cause analysis, trend detection, AI-driven prediction, and rebooking analytics.
 """
 from collections import defaultdict, Counter
@@ -9,7 +9,7 @@ from engine.ingestion import (
     to_float, safe_pct
 )
 
-# ─────────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 CANCEL_CATEGORIES = {
     "Customer not home":         "Access",
@@ -28,7 +28,7 @@ CANCEL_CATEGORIES = {
     "Parts not available":       "Equipment",
 }
 
-# ─── Public API ───────────────────────────────────────────────────────────────
+# â”€â”€â”€ Public API â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def get_cancellation_kpis(region_code: str = None, year: int = 2025) -> dict:
     """

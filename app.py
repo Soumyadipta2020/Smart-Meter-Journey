@@ -1,13 +1,13 @@
-"""
-IMSERV Smart Meter Appointment Planning & Utility Operations Platform
-Flask application — extends DAA-Project architecture patterns.
+﻿"""
+Smart Meter Journey - Appointment Planning & Utility Operations Platform
+Flask application â€” extends DAA-Project architecture patterns.
 
 Modules:
-  1. Appointment Journey              — executive funnel dashboard
-  2. Contact Centre Forecasting       — multi-model channel forecasting
-  3. Appointment Fallout             — root cause + AI prediction
-  4. Field Operations & Engineer Planning — scheduling + optimisation
-  5. Financial Scenario Planning      — cost/revenue simulation
+  1. Appointment Journey              â€” executive funnel dashboard
+  2. Contact Centre Forecasting       â€” multi-model channel forecasting
+  3. Appointment Fallout             â€” root cause + AI prediction
+  4. Field Operations & Engineer Planning â€” scheduling + optimisation
+  5. Financial Scenario Planning      â€” cost/revenue simulation
 """
 import os
 import json
@@ -21,14 +21,14 @@ from flask import Flask, jsonify, render_template, request
 from flask_cors import CORS
 from dotenv import load_dotenv
 
-# ─── Environment ─────────────────────────────────────────────────────────────
+# â”€â”€â”€ Environment â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent
 
-# ─── Flask App ────────────────────────────────────────────────────────────────
+# â”€â”€â”€ Flask App â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app = Flask(__name__, template_folder="templates", static_folder="static")
-app.secret_key = os.getenv("SECRET_KEY", "imserv-dev-secret-2026")
+app.secret_key = os.getenv("SECRET_KEY", "smart-meter-journey-dev-secret-2026")
 CORS(app)
 _DATA_READY = False
 SUPPORTED_YEARS = {2025, 2026}
@@ -41,7 +41,7 @@ def _request_year(default: int = 2025) -> int:
         return default
     return year if year in SUPPORTED_YEARS else default
 
-# ─── After-request: no-cache for all /api/* routes (mirrors DAA pattern) ─────
+# â”€â”€â”€ After-request: no-cache for all /api/* routes (mirrors DAA pattern) â”€â”€â”€â”€â”€
 @app.after_request
 def add_api_no_cache_headers(response):
     if request.path.startswith("/api/"):
@@ -50,7 +50,7 @@ def add_api_no_cache_headers(response):
     return response
 
 
-# ─── Lazy Engine Imports (avoids startup cost if data not yet generated) ─────
+# â”€â”€â”€ Lazy Engine Imports (avoids startup cost if data not yet generated) â”€â”€â”€â”€â”€
 def _get_forecasting_engine():
     from engine.forecasting_engine import (
         forecast_channel_volume, get_channel_kpis, get_booking_conversion_funnel
@@ -118,7 +118,7 @@ def _compact_chat_messages(messages: list[dict], limit: int = 10) -> list[dict]:
 def _chatbot_context(region: str | None, year: int, view: str | None) -> str:
     """Build a compact app snapshot so the chatbot can answer app-specific questions."""
     lines = [
-        "IMSERV Smart Meter Appointment Planning & Utility Operations Platform.",
+        "Smart Meter Journey - Appointment Planning & Utility Operations Platform.",
         "Modules: Appointment Journey, Contact Attempt Forecast, Risk & Recovery, Resource Planning, Scenario Impact.",
         f"Current view: {view or 'unknown'}. Region filter: {region or 'All Regions'}. Year: {year}.",
     ]
@@ -286,18 +286,18 @@ def _get_ingestion():
     return get_booking_journey, data_health, to_int, to_float, safe_pct, iter_jobs
 
 
-# ─────────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # FRONTEND VIEWS
-# ─────────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 @app.route("/")
 def index():
     return render_template("index.html")
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# MODULE 1 — BOOKINGS TO COMPLETIONS JOURNEY
-# ─────────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# MODULE 1 â€” BOOKINGS TO COMPLETIONS JOURNEY
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 @app.route("/api/journey/kpis")
 def journey_kpis():
@@ -626,9 +626,9 @@ def journey_interactions():
         return jsonify({"error": str(e)}), 500
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# MODULE 2 — CONTACT CENTRE FORECASTING
-# ─────────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# MODULE 2 â€” CONTACT CENTRE FORECASTING
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 @app.route("/api/forecasting/channel-kpis")
 def forecasting_channel_kpis():
@@ -665,7 +665,7 @@ def forecasting_funnel():
         return jsonify({"error": str(e)}), 500
 
 
-# ─────────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 @app.route("/api/forecasting/planning-target-kpis")
 def forecasting_planning_target_kpis():
     region = request.args.get("region")
@@ -677,8 +677,8 @@ def forecasting_planning_target_kpis():
         return jsonify({"error": str(e)}), 500
 
 
-# MODULE 3 — APPOINTMENT FALLOUT
-# ─────────────────────────────────────────────────────────────────────────────
+# MODULE 3 â€” APPOINTMENT FALLOUT
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 @app.route("/api/cancellations/kpis")
 def cancellations_kpis():
@@ -744,9 +744,9 @@ def cancellations_rebooking():
         return jsonify({"error": str(e)}), 500
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# MODULE 4 — FIELD OPERATIONS & ENGINEER PLANNING
-# ─────────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# MODULE 4 â€” FIELD OPERATIONS & ENGINEER PLANNING
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 @app.route("/api/field-ops/kpis")
 def field_ops_kpis():
@@ -827,9 +827,9 @@ def field_ops_optimise():
 
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# MODULE 5 — FINANCIAL SCENARIO PLANNING
-# ─────────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# MODULE 5 â€” FINANCIAL SCENARIO PLANNING
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 @app.route("/api/financial/kpis")
 def financial_kpis():
@@ -891,9 +891,9 @@ def financial_forecast():
         return jsonify({"error": "An internal error has occurred."}), 500
 
 
-# ─────────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # AI RECOMMENDATIONS
-# ─────────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 @app.route("/api/ai/recommendations")
 def ai_recommendations():
@@ -944,9 +944,9 @@ def ai_dashboard():
         return jsonify({"error": "An internal error has occurred."}), 500
 
 
-# ─────────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # SYSTEM / UTILITY
-# ─────────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 @app.route("/api/chatbot/message", methods=["POST"])
 def chatbot_message():
@@ -968,7 +968,7 @@ def chatbot_message():
 
         context = _chatbot_context(region, year, view)
         system_prompt = (
-            "You are the IMSERV app assistant. Help users understand and use this smart meter "
+            "You are the Smart Meter Journey app assistant. Help users understand and use this smart meter "
             "operations dashboard. Be concise, practical, and app-specific. Use the provided "
             "snapshot for numbers. If a user asks for a metric not in the snapshot, say where "
             "in the app they can inspect it instead of inventing values.\n\n"
@@ -1038,10 +1038,10 @@ def data_reload():
 def data_generate():
     """Trigger synthetic data generation (dev/reset use only)."""
     try:
-        if os.getenv("RENDER") and os.getenv("IMSERV_ENABLE_DATA_GENERATE", "").lower() != "true":
+        if os.getenv("RENDER") and os.getenv("SMJ_ENABLE_DATA_GENERATE", "").lower() != "true":
             return jsonify({
                 "error": "Dataset generation is disabled on Render to stay within memory limits.",
-                "hint": "Set IMSERV_ENABLE_DATA_GENERATE=true only for a one-off maintenance run.",
+                "hint": "Set SMJ_ENABLE_DATA_GENERATE=true only for a one-off maintenance run.",
             }), 403
         from engine.data_generator import generate_all
         from engine.ingestion import clear_data_caches
@@ -1069,7 +1069,7 @@ def get_regions():
     ])
 
 
-# ─── Startup: generate data if missing ───────────────────────────────────────
+# â”€â”€â”€ Startup: generate data if missing â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 def _ensure_data():
     """Ensure required data files exist without loading them into memory."""
     global _DATA_READY
@@ -1080,32 +1080,32 @@ def _ensure_data():
     master = BASE_DIR / "data" / "inputs" / "master_operations.csv"
     if not manifest.exists() or not master.exists():
         can_generate = (
-            os.getenv("IMSERV_AUTO_GENERATE_DATA", "").lower() == "true"
+            os.getenv("SMJ_AUTO_GENERATE_DATA", "").lower() == "true"
             or (
                 os.getenv("FLASK_ENV", "development") == "development"
                 and not os.getenv("RENDER")
             )
         )
         if can_generate:
-            print("IMSERV: Connected data source not found - generating synthetic datasets...")
+            print("Smart Meter Journey: Connected data source not found - generating synthetic datasets...")
             try:
                 from engine.data_generator import generate_all
                 generate_all()
             except Exception as e:
-                print(f"IMSERV: Data generation failed: {e}")
+                print(f"Smart Meter Journey: Data generation failed: {e}")
         else:
-            print("IMSERV: Connected data source missing. Skipping auto-generation on constrained runtime.")
+            print("Smart Meter Journey: Connected data source missing. Skipping auto-generation on constrained runtime.")
 
-    print("IMSERV: Data files verified. CSVs will be loaded lazily per request.")
+    print("Smart Meter Journey: Data files verified. CSVs will be loaded lazily per request.")
     _DATA_READY = True
 
 
-# ─────────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 _ensure_data()
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 5000))
     debug = os.getenv("FLASK_ENV", "development") == "development"
-    print(f"\nIMSERV Platform running on http://localhost:{port}\n")
+    print(f"\nSmart Meter Journey running on http://localhost:{port}\n")
     app.run(host="0.0.0.0", port=port, debug=debug)

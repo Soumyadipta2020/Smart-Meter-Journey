@@ -1,6 +1,6 @@
-services:
+﻿services:
   - type: web
-    name: imserv-platform
+    name: SMJ-platform
     env: python
     buildCommand: "pip install -r requirements.txt"
     startCommand: "gunicorn --bind 0.0.0.0:$PORT --workers 1 --threads 2 --timeout 120 --max-requests 150 --max-requests-jitter 30 app:app"
@@ -27,9 +27,9 @@ services:
         value: "450"
       - key: HF_CHAT_TEMPERATURE
         value: "0.35"
-      - key: IMSERV_CACHE_LARGE_DATASETS
+      - key: SMJ_CACHE_LARGE_DATASETS
         value: "false"
-      - key: IMSERV_AUTO_GENERATE_DATA
+      - key: SMJ_AUTO_GENERATE_DATA
         value: "false"
       - key: MALLOC_ARENA_MAX
         value: "2"

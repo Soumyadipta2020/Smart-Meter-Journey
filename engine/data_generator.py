@@ -1,5 +1,5 @@
-"""
-IMSERV Platform - Connected Synthetic Dataset Generator.
+﻿"""
+Smart Meter Journey - Connected Synthetic Dataset Generator.
 
 The generated data now has a single source of truth:
 data/inputs/master_operations.csv
@@ -289,7 +289,7 @@ def _generate_master_operations(engineers_by_patch: dict, availability: dict, su
                     job_counter += 1
 
                 rows.append({
-                    "job_ref": f"IMSERV-{d.year}-{job_counter:07d}",
+                    "job_ref": f"SMJ-{d.year}-{job_counter:07d}",
                     "supplier_name": supplier_pool[(job_counter - 1) % len(supplier_pool)],
                     "region_code": region_code,
                     "region_name": rinfo["name"],
@@ -520,7 +520,7 @@ def _derive_capacity_data(master_rows: list, availability_rows: list) -> list:
 
 def generate_all():
     random.seed(RANDOM_SEED)
-    print("\nIMSERV - Generating connected synthetic datasets...\n")
+    print("\nSmart Meter Journey - Generating connected synthetic datasets...\n")
 
     engineers, engineers_by_patch, _ = _build_engineers()
     availability_rows, availability_by_key = _build_availability(engineers)

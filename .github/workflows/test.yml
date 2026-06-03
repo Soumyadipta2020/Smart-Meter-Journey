@@ -35,5 +35,5 @@ jobs:
         env:
           FLASK_ENV: testing
           ENABLE_AI_RECOMMENDATIONS: "false"
-          IMSERV_AUTO_GENERATE_DATA: "false"
+          SMJ_AUTO_GENERATE_DATA: "false"
         run: python -m unittest discover -s tests -v

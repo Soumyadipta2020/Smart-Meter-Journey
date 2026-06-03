@@ -1,9 +1,9 @@
-import os
+﻿import os
 import unittest
 
 os.environ.setdefault("FLASK_ENV", "testing")
 os.environ.setdefault("ENABLE_AI_RECOMMENDATIONS", "false")
-os.environ.setdefault("IMSERV_AUTO_GENERATE_DATA", "false")
+os.environ.setdefault("SMJ_AUTO_GENERATE_DATA", "false")
 
 from app import app  # noqa: E402
 
@@ -25,7 +25,7 @@ class AppSmokeTests(unittest.TestCase):
         response = self.client.get("/")
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b"IMSERV", response.data)
+        self.assertIn(b"Smart Meter", response.data)
 
     def test_health_reports_required_data_available(self):
         response = self.client.get("/api/health")

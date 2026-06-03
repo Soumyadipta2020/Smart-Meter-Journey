@@ -1,11 +1,11 @@
-/* IMSERV - Main Application Controller */
+﻿/* Smart Meter Journey - Main Application Controller */
 
 const VIEW_CONFIG = {
-  journey: { title: 'Smart Meter Appointment Journey Overview', breadcrumb: 'IMSERV / Appointments / Appointment Journey', loader: loadJourneyDashboard },
-  forecasting: { title: 'Appointment and Resource Planning', breadcrumb: 'IMSERV / Planning / Contact Attempt Forecast and Capacity', loader: loadFieldOpsDashboard },
-  cancellations: { title: 'Appointment Fallout Risk and Recovery', breadcrumb: 'IMSERV / Appointments / Risk and Recovery', loader: loadCancellationsDashboard },
-  'field-ops': { title: 'Appointment and Resource Planning', breadcrumb: 'IMSERV / Planning / Contact Attempt Forecast and Capacity', loader: loadFieldOpsDashboard },
-  financial: { title: 'Appointment and Resource Financial Planning', breadcrumb: 'IMSERV / Finance / Scenario Impact', loader: loadFinancialDashboard },
+  journey: { title: 'Smart Meter Appointment Journey Overview', breadcrumb: 'Smart Meter Journey / Appointments / Appointment Journey', loader: loadJourneyDashboard },
+  forecasting: { title: 'Appointment and Resource Planning', breadcrumb: 'Smart Meter Journey / Planning / Contact Attempt Forecast and Capacity', loader: loadFieldOpsDashboard },
+  cancellations: { title: 'Appointment Fallout Risk and Recovery', breadcrumb: 'Smart Meter Journey / Appointments / Risk and Recovery', loader: loadCancellationsDashboard },
+  'field-ops': { title: 'Appointment and Resource Planning', breadcrumb: 'Smart Meter Journey / Planning / Contact Attempt Forecast and Capacity', loader: loadFieldOpsDashboard },
+  financial: { title: 'Appointment and Resource Financial Planning', breadcrumb: 'Smart Meter Journey / Finance / Scenario Impact', loader: loadFinancialDashboard },
 };
 
 let _currentView = 'journey';
@@ -17,7 +17,7 @@ function getViewYear(viewName) {
 }
 
 function getViewLoadKey(viewName) {
-  return `${viewName}|${IMSERV.getRegion()}|${getViewYear(viewName)}`;
+  return `${viewName}|${SMJ.getRegion()}|${getViewYear(viewName)}`;
 }
 
 function invalidateLoadedViews() {
@@ -80,8 +80,8 @@ function updateSidebarControls() {
   });
 
   document.querySelectorAll('.sidebar-toggle-icon').forEach(el => {
-    if (window.IMSERV?.iconSvg) {
-      el.innerHTML = IMSERV.iconSvg(icon);
+    if (window.SMJ?.iconSvg) {
+      el.innerHTML = SMJ.iconSvg(icon);
       el.classList.add('modern-icon');
       el.dataset.iconReady = 'true';
     }
@@ -173,14 +173,14 @@ async function loadAiModal() {
   if (!body) return;
   body.innerHTML = '<div class="loading"><span class="spinner"></span> Generating AI insights...</div>';
 
-  const year = IMSERV.getYear();
-  const ai = await IMSERV.apiFetch('/api/ai/dashboard?year=' + year + '&max=15');
+  const year = SMJ.getYear();
+  const ai = await SMJ.apiFetch('/api/ai/dashboard?year=' + year + '&max=15');
   const recs = ai?.recommendations;
   if (recs && typeof updateAiTriggerState === 'function') updateAiTriggerState(recs);
 
   if (!recs) {
     body.innerHTML = '<div class="empty-state"><div class="empty-icon"></div><div class="empty-title">Could not load recommendations</div></div>';
-    IMSERV.hydrateIcons(body);
+    SMJ.hydrateIcons(body);
     return;
   }
 
@@ -215,7 +215,7 @@ async function loadAiModal() {
     </div>
     <div class="rec-list">${recsHtml}</div>
   `;
-  IMSERV.hydrateIcons(body);
+  SMJ.hydrateIcons(body);
 }
 
 document.getElementById('ai-modal')?.addEventListener('click', function (e) {
@@ -296,8 +296,8 @@ async function sendChatbotMessage(event) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         messages: _chatbotHistory.slice(-10),
-        region: IMSERV.getRegion(),
-        year: IMSERV.getYear(),
+        region: SMJ.getRegion(),
+        year: SMJ.getYear(),
         view: activeViewName(),
       }),
     });
@@ -326,8 +326,8 @@ function initChatbotWidget() {
   ];
   iconTargets.forEach(([id, icon]) => {
     const el = document.getElementById(id);
-    if (el && window.IMSERV?.iconSvg) {
-      el.innerHTML = IMSERV.iconSvg(icon);
+    if (el && window.SMJ?.iconSvg) {
+      el.innerHTML = SMJ.iconSvg(icon);
       el.dataset.iconReady = 'true';
     }
   });

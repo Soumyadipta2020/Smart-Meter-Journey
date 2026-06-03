@@ -1,5 +1,5 @@
-"""
-IMSERV Platform — AI Recommendation Engine
+﻿"""
+Smart Meter Journey â€” AI Recommendation Engine
 Generates intelligent operational recommendations from cross-module signals.
 Produces prioritised alerts for the executive dashboard.
 """
@@ -10,14 +10,14 @@ from engine.cancellation_engine import get_regional_cancellation_heatmap
 from engine.field_ops_engine import predict_understaffing
 from engine.financial_engine import get_financial_kpis
 
-# ─────────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 REGIONS = ["NW", "NE", "MID", "SE", "SW", "WAL", "SCO", "YRK"]
 
 PRIORITY_ORDER = {"Critical": 0, "High": 1, "Medium": 2, "Low": 3}
 
 
-# ─── Recommendation Builders ──────────────────────────────────────────────────
+# â”€â”€â”€ Recommendation Builders â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def _capacity_alerts(year: int = 2025) -> list:
     """Identify regions with critical capacity shortfalls."""
@@ -42,7 +42,7 @@ def _capacity_alerts(year: int = 2025) -> list:
                 "type":           "capacity_alert",
                 "priority":       "Critical" if avg_util > 90 else "High",
                 "region_code":    rc,
-                "title":          f"Capacity Risk — {rc} Region",
+                "title":          f"Capacity Risk â€” {rc} Region",
                 "body":           f"Average utilisation {round(avg_util, 1)}% with {red_weeks} weeks >90%."
                                   f" Immediate workforce rebalancing recommended.",
                 "metric_value":   round(avg_util, 1),
@@ -105,8 +105,8 @@ def _financial_alerts(year: int = 2025) -> list:
                 "priority":       "Critical" if margin_pct < 10 else "High",
                 "region_code":    None,
                 "title":          "Margin Below Target",
-                "body":           f"Overall margin at {margin_pct}% — below 15% threshold. "
-                                  f"Average cost per completion £{cpp}. "
+                "body":           f"Overall margin at {margin_pct}% â€” below 15% threshold. "
+                                  f"Average cost per completion Â£{cpp}. "
                                   f"Review engineer productivity and job mix.",
                 "metric_value":   margin_pct,
                 "metric_label":   "Margin %",
@@ -120,7 +120,7 @@ def _financial_alerts(year: int = 2025) -> list:
                     "type":           "financial_risk",
                     "priority":       "Medium",
                     "region_code":    None,
-                    "title":          f"Low Margin — {jt['job_type']}",
+                    "title":          f"Low Margin â€” {jt['job_type']}",
                     "body":           f"{jt['job_type']} delivering only {jt['margin_pct']}% margin. "
                                       f"Review pricing or cost model for this job type.",
                     "metric_value":   jt["margin_pct"],
@@ -145,7 +145,7 @@ def _understaffing_alerts(year: int = 2025) -> list:
                     "type":           "understaffing",
                     "priority":       worst["risk_level"],
                     "region_code":    rc,
-                    "title":          f"Understaffing Forecast — {rc} Week {worst['week_number']}",
+                    "title":          f"Understaffing Forecast â€” {rc} Week {worst['week_number']}",
                     "body":           worst.get("recommendation", f"{rc} predicted at {worst['utilisation_pct']}% utilisation."),
                     "metric_value":   worst["utilisation_pct"],
                     "metric_label":   "Predicted Utilisation %",
@@ -167,7 +167,7 @@ def _positive_insights(year: int = 2025) -> list:
                 "priority":       "Low",
                 "region_code":    None,
                 "title":          "Strong Margin Performance",
-                "body":           f"Overall margin at {kpis['margin_pct']}% — above target. "
+                "body":           f"Overall margin at {kpis['margin_pct']}% â€” above target. "
                                   f"Consider reinvesting in engineer training or capacity expansion.",
                 "metric_value":   kpis["margin_pct"],
                 "metric_label":   "Margin %",
@@ -179,7 +179,7 @@ def _positive_insights(year: int = 2025) -> list:
     return insights
 
 
-# ─── Main Public API ─────────────────────────────────────────────────────────
+# â”€â”€â”€ Main Public API â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def get_all_recommendations(year: int = 2025, max_results: int = 20) -> dict:
     """
@@ -231,7 +231,7 @@ def get_natural_language_summary(year: int = 2025, recommendations: dict = None)
     Generate a natural language executive summary of operational health.
 
     Returns:
-        str — executive summary paragraph
+        str â€” executive summary paragraph
     """
     try:
         fin   = get_financial_kpis(year=year)
@@ -245,9 +245,9 @@ def get_natural_language_summary(year: int = 2025, recommendations: dict = None)
         health = "strong" if margin > 22 and crit == 0 else ("at risk" if crit > 2 else "stable")
 
         summary = (
-            f"IMSERV operational health is {health} for {year}. "
+            f"Smart Meter Journey operational health is {health} for {year}. "
             f"Overall margin is {margin}% with {fin['total_completions']:,} completions "
-            f"at £{fin['avg_cost_per_completion']:.0f} average cost per job. "
+            f"at Â£{fin['avg_cost_per_completion']:.0f} average cost per job. "
         )
         if crit > 0:
             summary += f"There are {crit} critical alerts requiring immediate attention. "

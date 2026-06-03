@@ -1,11 +1,11 @@
-/* ============================================================
-   IMSERV Smart Meter Field Planning Platform
-   Design System — Extended from DAA-Project dark theme
+﻿/* ============================================================
+   Smart Meter Journey Field Planning Platform
+   Design System â€” Extended from DAA-Project dark theme
    ============================================================ */
 
-/* ─── CSS Variables ────────────────────────────────────────── */
+/* â”€â”€â”€ CSS Variables â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 :root {
-  /* Brand - IMSERV Power BI theme palette */
+  /* Brand theme palette */
   --brand-primary:   #028178;
   --brand-accent:    #02C2B7;
   --brand-bright:    #03F4E8;
@@ -109,7 +109,7 @@
   --shadow-lg:       0 8px 32px rgba(0,0,0,0.50);
 }
 
-/* ─── Reset & Base ─────────────────────────────────────────── */
+/* â”€â”€â”€ Reset & Base â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -128,18 +128,18 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* ─── Scrollbar ─────────────────────────────────────────────── */
+/* â”€â”€â”€ Scrollbar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--border-accent); border-radius: 3px; }
 
-/* ─── Layout Shell ──────────────────────────────────────────── */
+/* â”€â”€â”€ Layout Shell â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .app-shell {
   display: flex;
   min-height: 100vh;
 }
 
-/* ─── Sidebar Navigation ────────────────────────────────────── */
+/* â”€â”€â”€ Sidebar Navigation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .sidebar {
   width: max-content;
   min-width: var(--nav-fluid-min);
@@ -174,16 +174,51 @@ body {
   padding: 12px 16px;
   display: flex;
   align-items: center;
+  gap: 10px;
   border-bottom: 1px solid var(--border);
   min-height: var(--header-height);
 }
 
-.brand-logo-image {
-  width: 158px;
-  height: auto;
-  display: block;
-  border-radius: 6px;
+.brand-icon {
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  color: var(--text-invert);
+  background: linear-gradient(135deg, var(--brand-primary), var(--brand-accent));
+  box-shadow: var(--shadow-sm);
   flex-shrink: 0;
+}
+
+.brand-icon .icon-svg {
+  width: 22px;
+  height: 22px;
+  stroke-width: 2;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.05;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.brand-name {
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.brand-subtitle {
+  color: var(--brand-accent);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .sidebar.collapsed .sidebar-brand {
@@ -191,11 +226,8 @@ body {
   justify-content: center;
 }
 
-.sidebar.collapsed .brand-logo-image {
-  width: 42px;
-  height: 42px;
-  object-fit: cover;
-  object-position: left center;
+.sidebar.collapsed .brand-text {
+  display: none;
 }
 
 .sidebar-nav {
@@ -344,7 +376,7 @@ body {
   height: 16px;
 }
 
-/* ─── Main Content Area ─────────────────────────────────────── */
+/* â”€â”€â”€ Main Content Area â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .main-content {
   flex: 1;
   margin-left: var(--nav-current-width, var(--nav-width));
@@ -356,7 +388,7 @@ body {
 
 .sidebar.collapsed ~ .main-content { margin-left: var(--nav-current-width, var(--nav-collapsed)); }
 
-/* ─── Top Header ────────────────────────────────────────────── */
+/* â”€â”€â”€ Top Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .top-header {
   height: var(--header-height);
   background: var(--bg-surface);
@@ -502,14 +534,14 @@ body {
 .filter-select:focus { border-color: var(--brand-accent); }
 .filter-select option { background: var(--bg-card); }
 
-/* ─── Page Content ──────────────────────────────────────────── */
+/* â”€â”€â”€ Page Content â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .page-content {
   flex: 1;
   padding: 14px 18px;
   overflow-y: auto;
 }
 
-/* ─── View Management ───────────────────────────────────────── */
+/* â”€â”€â”€ View Management â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .view { display: none; }
 .view.active { display: block; }
 
@@ -523,7 +555,7 @@ body {
 #view-cancellations .recovery-constellation-card { order: 3; }
 #view-cancellations .combined-risk-panel { order: 4; margin-top: 14px; }
 
-/* ─── KPI Cards ─────────────────────────────────────────────── */
+/* â”€â”€â”€ KPI Cards â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .kpi-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -692,7 +724,7 @@ body {
   left: 14px;
 }
 
-/* ─── Cards & Panels ────────────────────────────────────────── */
+/* â”€â”€â”€ Cards & Panels â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .card {
   --card-accent: var(--brand-accent);
   background:
@@ -750,7 +782,7 @@ body {
   padding: 12px;
 }
 
-/* ─── Dashboard Grids ───────────────────────────────────────── */
+/* â”€â”€â”€ Dashboard Grids â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
 .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px; }
 .grid-7-5 { display: grid; grid-template-columns: 7fr 5fr; gap: 12px; margin-bottom: 12px; }
@@ -782,7 +814,7 @@ body {
   padding-bottom: 6px;
 }
 
-/* ─── Chart Containers ──────────────────────────────────────── */
+/* â”€â”€â”€ Chart Containers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .chart-wrap {
   position: relative;
   width: 100%;
@@ -820,7 +852,7 @@ body {
   height: 170px;
 }
 
-/* ─── Scenario Assumptions Panel ───────────────────────────── */
+/* â”€â”€â”€ Scenario Assumptions Panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .sc-assumptions {
   display: none;
   margin-top: 20px;
@@ -914,7 +946,7 @@ body {
   .sc-assumptions-grid { grid-template-columns: 1fr; }
 }
 
-/* ─── Tables ────────────────────────────────────────────────── */
+/* â”€â”€â”€ Tables â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .data-table {
   width: 100%;
   border-collapse: collapse;
@@ -944,7 +976,7 @@ body {
 .data-table tr:hover td { background: rgba(255,255,255,0.03); }
 .data-table tr:last-child td { border-bottom: none; }
 
-/* ─── RAG Status Badges ─────────────────────────────────────── */
+/* â”€â”€â”€ RAG Status Badges â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .rag {
   display: inline-flex;
   align-items: center;
@@ -961,11 +993,11 @@ body {
 .rag.Red    { background: var(--crit-bg); color: var(--crit); }
 
 .rag::before {
-  content: '●';
+  content: 'â—';
   font-size: 8px;
 }
 
-/* ─── Priority Badges ───────────────────────────────────────── */
+/* â”€â”€â”€ Priority Badges â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .priority {
   display: inline-block;
   padding: 2px 8px;
@@ -980,7 +1012,7 @@ body {
 .priority.Medium   { background: var(--info-bg); color: var(--info); border: 1px solid rgba(2,194,183,0.3); }
 .priority.Low      { background: var(--ok-bg);   color: var(--ok);   border: 1px solid rgba(2,129,120,0.3); }
 
-/* ─── Funnel Chart ──────────────────────────────────────────── */
+/* â”€â”€â”€ Funnel Chart â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .funnel-container {
   min-height: 100%;
   padding: 12px 0 4px;
@@ -2229,7 +2261,7 @@ body {
   font-weight: 900;
 }
 
-/* ─── AI Recommendation Cards ───────────────────────────────── */
+/* â”€â”€â”€ AI Recommendation Cards â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .rec-list {
   display: flex;
   flex-direction: column;
@@ -2305,7 +2337,7 @@ body {
   color: var(--text-secondary);
 }
 
-/* ─── Planning Grid (Field Ops) ─────────────────────────────── */
+/* â”€â”€â”€ Planning Grid (Field Ops) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 /* Customer Interaction Classification */
 .interaction-route-list {
   display: grid;
@@ -2536,7 +2568,7 @@ body {
   flex-shrink: 0;
 }
 
-/* ─── Scenario Panel ────────────────────────────────────────── */
+/* â”€â”€â”€ Scenario Panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .scenario-panel {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -2655,7 +2687,7 @@ body {
   text-align: right;
 }
 
-/* ─── Buttons ───────────────────────────────────────────────── */
+/* â”€â”€â”€ Buttons â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -2702,7 +2734,7 @@ body {
 .btn-sm { padding: 4px 10px; font-size: 11px; }
 .btn-lg { padding: 10px 24px; font-size: 14px; }
 
-/* ─── Tabs ──────────────────────────────────────────────────── */
+/* â”€â”€â”€ Tabs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .tab-bar {
   display: flex;
   gap: 2px;
@@ -4101,7 +4133,7 @@ body {
   font-size: 10px;
 }
 
-/* ─── Waterfall Chart ───────────────────────────────────────── */
+/* â”€â”€â”€ Waterfall Chart â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .risk-prediction-card {
   flex: 1;
   display: grid;
@@ -4237,7 +4269,7 @@ body {
   height: 200px;
 }
 
-/* ─── Loading Spinner ───────────────────────────────────────── */
+/* â”€â”€â”€ Loading Spinner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .loading {
   display: flex;
   align-items: center;
@@ -4283,7 +4315,7 @@ body {
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ─── Empty State ───────────────────────────────────────────── */
+/* â”€â”€â”€ Empty State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .empty-state {
   text-align: center;
   padding: 24px 14px;
@@ -4294,7 +4326,7 @@ body {
 .empty-state .empty-title { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
 .empty-state .empty-desc  { font-size: 12px; }
 
-/* ─── Alerts ────────────────────────────────────────────────── */
+/* â”€â”€â”€ Alerts â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .alert {
   padding: 8px 10px;
   border-radius: var(--radius-sm);
@@ -4311,7 +4343,7 @@ body {
 .alert-crit { background: var(--crit-bg); color: #B84A4A; border-color: rgba(251,130,129,0.25); }
 .alert-info { background: var(--info-bg); color: #02C2B7; border-color: rgba(2,194,183,0.25); }
 
-/* ─── Progress / Utilisation Rings ─────────────────────────── */
+/* â”€â”€â”€ Progress / Utilisation Rings â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 /* Cancellation risk panel */
 #cancel-risk-panel > .grid-2 {
   display: block;
@@ -4360,7 +4392,7 @@ body {
   text-align: center;
 }
 
-/* ─── Modals ────────────────────────────────────────────────── */
+/* â”€â”€â”€ Modals â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .modal-overlay {
   display: none;
   position: fixed;
@@ -4660,7 +4692,7 @@ body {
   cursor: not-allowed;
 }
 
-/* ─── AI Summary Bar ────────────────────────────────────────── */
+/* â”€â”€â”€ AI Summary Bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .ai-summary-bar {
   background: linear-gradient(135deg, rgba(2,129,120,0.15), rgba(2,194,183,0.10));
   border: 1px solid var(--border-accent);
@@ -4681,7 +4713,7 @@ body {
   line-height: 1.45;
 }
 
-/* ─── Stat Chips ────────────────────────────────────────────── */
+/* â”€â”€â”€ Stat Chips â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .stat-chip {
   display: inline-flex;
   align-items: center;
@@ -4702,7 +4734,7 @@ body {
 
 .stat-chip strong { color: var(--text-primary); font-size: 12px; }
 
-/* ─── Recovery Constellation ────────────────────────────────── */
+/* â”€â”€â”€ Recovery Constellation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .recovery-constellation-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -5282,7 +5314,7 @@ body {
   50%       { r: 14; opacity: 0.6; }
 }
 
-/* ─── Recovery Constellation Tooltip ────────────────────────── */
+/* â”€â”€â”€ Recovery Constellation Tooltip â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .rc-tooltip {
   position: fixed;
   z-index: 9999;
@@ -5644,7 +5676,7 @@ body {
   color: var(--text-primary);
 }
 
-/* ─── Responsive ────────────────────────────────────────────── */
+/* â”€â”€â”€ Responsive â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @media (max-width: 1200px) {
   .grid-2, .grid-7-5, .grid-5-7 { grid-template-columns: 1fr; }
   #journey-kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -5730,11 +5762,8 @@ body {
     padding: 12px 8px;
     justify-content: center;
   }
-  .sidebar .brand-logo-image {
-    width: 42px;
-    height: 42px;
-    object-fit: cover;
-    object-position: left center;
+  .sidebar .brand-text {
+    display: none;
   }
   .kpi-grid { grid-template-columns: 1fr; }
   .forecast-kpi-grid { grid-template-columns: 1fr; }
@@ -5901,7 +5930,7 @@ body {
   .page-content { padding: 14px; }
 }
 
-/* ─── Utilities ─────────────────────────────────────────────── */
+/* â”€â”€â”€ Utilities â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .text-ok   { color: var(--ok);   }
 .text-warn { color: var(--warn); }
 .text-crit { color: var(--crit); }
@@ -5925,7 +5954,7 @@ body {
 .align-center  { align-items: center; }
 .justify-between{ justify-content: space-between; }
 
-/* ─── Utilities ─────────────────────────────────────────────── */
+/* â”€â”€â”€ Utilities â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .text-ok   { color: var(--ok);   }
 .text-warn { color: var(--warn); }
 .text-crit { color: var(--crit); }

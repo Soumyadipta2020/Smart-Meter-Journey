@@ -1,10 +1,10 @@
-/* IMSERV — Module 1: Appointment Journey Dashboard */
+﻿/* SMJ â€” Module 1: Appointment Journey Dashboard */
 
 let _journeyTrendChart = null;
 
 async function loadJourneyDashboard() {
-  const region = IMSERV.getRegion();
-  const year   = IMSERV.getYear();
+  const region = SMJ.getRegion();
+  const year   = SMJ.getYear();
   const qs     = `?region=${region}&year=${year}`;
   refreshJourneyVisualLabels();
   const loadingTargets = [
@@ -15,16 +15,16 @@ async function loadJourneyDashboard() {
     'channel-comparison-grid',
     'supplier-behaviour-grid',
   ];
-  IMSERV.setLoading(loadingTargets, true);
+  SMJ.setLoading(loadingTargets, true);
 
   try {
     // Keep the first paint light; AI recommendations load after the main dashboard.
     const [kpis, heatmap, trend, funnel, suppliers] = await Promise.all([
-      IMSERV.apiFetch('/api/journey/kpis' + qs),
-      IMSERV.apiFetch('/api/journey/regional-heatmap' + qs),
-      IMSERV.apiFetch('/api/journey/weekly-trend' + qs),
-      IMSERV.apiFetch('/api/forecasting/funnel' + qs),
-      IMSERV.apiFetch('/api/journey/suppliers' + qs + '&top_n=18'),
+      SMJ.apiFetch('/api/journey/kpis' + qs),
+      SMJ.apiFetch('/api/journey/regional-heatmap' + qs),
+      SMJ.apiFetch('/api/journey/weekly-trend' + qs),
+      SMJ.apiFetch('/api/forecasting/funnel' + qs),
+      SMJ.apiFetch('/api/journey/suppliers' + qs + '&top_n=18'),
     ]);
 
     if (kpis)    renderJourneyKPIs(kpis);
@@ -40,11 +40,11 @@ async function loadJourneyDashboard() {
 
     await loadChannelComparison(false);
   } finally {
-    IMSERV.setLoading(loadingTargets, false);
+    SMJ.setLoading(loadingTargets, false);
   }
 
   window.setTimeout(async () => {
-    const ai = await IMSERV.apiFetch('/api/ai/dashboard?year=' + year + '&max=8');
+    const ai = await SMJ.apiFetch('/api/ai/dashboard?year=' + year + '&max=8');
     if (ai?.recommendations) updateAiTriggerState(ai.recommendations);
     if (ai?.summary) document.getElementById('journey-ai-text').textContent = ai.summary || '';
   }, 250);
@@ -65,7 +65,7 @@ function refreshJourneyVisualLabels() {
     const subtitle = title.closest('.card-header')?.querySelector('.card-subtitle');
     if (subtitle) subtitle.textContent = match[1];
   });
-  IMSERV.hydrateIcons(document.getElementById('view-journey'));
+  SMJ.hydrateIcons(document.getElementById('view-journey'));
 }
 
 function renderCustomerInteractions(data) {
@@ -77,7 +77,7 @@ function renderCustomerInteractions(data) {
 
   const routes = data.routes || [];
   if (total) {
-    total.innerHTML = `<strong>${IMSERV.fmt.num(data.total_interactions)}</strong> interactions`;
+    total.innerHTML = `<strong>${SMJ.fmt.num(data.total_interactions)}</strong> interactions`;
   }
 
   if (!routes.length) {
@@ -97,9 +97,9 @@ function renderCustomerInteractions(data) {
       </div>
       <div class="interaction-stage">${r.journey_stage}</div>
       <div class="interaction-route-metrics">
-        <div><span>Interactions</span><strong>${IMSERV.fmt.num(r.interactions)}</strong></div>
-        <div><span>Appointments Booked</span><strong>${IMSERV.fmt.num(r.bookings)}</strong></div>
-        <div><span>Conversion</span><strong>${IMSERV.fmt.pct(r.conversion_pct)}</strong></div>
+        <div><span>Interactions</span><strong>${SMJ.fmt.num(r.interactions)}</strong></div>
+        <div><span>Appointments Booked</span><strong>${SMJ.fmt.num(r.bookings)}</strong></div>
+        <div><span>Conversion</span><strong>${SMJ.fmt.pct(r.conversion_pct)}</strong></div>
       </div>
     </div>
   `).join('');
@@ -108,11 +108,11 @@ function renderCustomerInteractions(data) {
     <div class="interaction-type-card ${t.customer_interaction_type === 'Chat' ? 'chat' : 'voice'}">
       <div>
         <div class="interaction-type-name">${t.customer_interaction_type}</div>
-        <div class="interaction-type-meta">${IMSERV.fmt.pct(t.share_pct)} of interactions</div>
+        <div class="interaction-type-meta">${SMJ.fmt.pct(t.share_pct)} of interactions</div>
       </div>
       <div class="interaction-type-values">
-        <strong>${IMSERV.fmt.num(t.interactions)}</strong>
-        <span>${IMSERV.fmt.num(t.bookings)} appointments booked</span>
+        <strong>${SMJ.fmt.num(t.interactions)}</strong>
+        <span>${SMJ.fmt.num(t.bookings)} appointments booked</span>
       </div>
     </div>
   `).join('');
@@ -122,7 +122,7 @@ function renderCustomerInteractions(data) {
     const top = data.top_route;
     insight.innerHTML = best && top ? `
       <div class="stat-chip">Top source: <strong>${top.source_interaction_channel}</strong></div>
-      <div class="stat-chip">Best conversion: <strong>${best.source_interaction_channel} ${IMSERV.fmt.pct(best.conversion_pct)}</strong></div>
+      <div class="stat-chip">Best conversion: <strong>${best.source_interaction_channel} ${SMJ.fmt.pct(best.conversion_pct)}</strong></div>
     ` : '';
   }
 }
@@ -134,15 +134,15 @@ function renderJourneyKPIs(kpis) {
   };
   const uniqueCustomers = kpis.unique_customers
     ?? (kpis.avg_contacts_per_customer ? Math.round((kpis.total_contacts || 0) / kpis.avg_contacts_per_customer) : kpis.total_requests);
-  set('kpi-customers',        IMSERV.fmt.num(uniqueCustomers));
-  set('kpi-appointments-booked', IMSERV.fmt.num(kpis.total_bookings));
-  set('kpi-contacts',         IMSERV.fmt.num(kpis.total_contacts));
-  set('kpi-avg-contacts',     kpis.avg_contacts_per_customer?.toFixed(2) || '—');
-  set('kpi-bookings',         IMSERV.fmt.num(kpis.total_visits ?? Math.max((kpis.total_bookings || 0) - (kpis.total_cancellations || 0), 0)));
-  set('kpi-cancellations',    IMSERV.fmt.num(kpis.total_cancellations));
-  set('kpi-aborts',           IMSERV.fmt.num(kpis.total_aborts));
-  set('kpi-completions',      IMSERV.fmt.num(kpis.total_completions));
-  set('kpi-completion-rate',  IMSERV.fmt.pct(kpis.completion_rate));
+  set('kpi-customers',        SMJ.fmt.num(uniqueCustomers));
+  set('kpi-appointments-booked', SMJ.fmt.num(kpis.total_bookings));
+  set('kpi-contacts',         SMJ.fmt.num(kpis.total_contacts));
+  set('kpi-avg-contacts',     kpis.avg_contacts_per_customer?.toFixed(2) || 'â€”');
+  set('kpi-bookings',         SMJ.fmt.num(kpis.total_visits ?? Math.max((kpis.total_bookings || 0) - (kpis.total_cancellations || 0), 0)));
+  set('kpi-cancellations',    SMJ.fmt.num(kpis.total_cancellations));
+  set('kpi-aborts',           SMJ.fmt.num(kpis.total_aborts));
+  set('kpi-completions',      SMJ.fmt.num(kpis.total_completions));
+  set('kpi-completion-rate',  SMJ.fmt.pct(kpis.completion_rate));
 
   // Colour the completion rate card
   const crCard = document.getElementById('kpi-success-rate-card');
@@ -185,16 +185,16 @@ function renderFunnel(kpis) {
         <div class="funnel-label">${s.label}</div>
         <div class="funnel-bar-wrap">
           <div class="funnel-bar ${s.cls}" style="width:${pct}%">
-            ${IMSERV.fmt.num(s.val)}
+            ${SMJ.fmt.num(s.val)}
           </div>
         </div>
-        <div class="funnel-value">${IMSERV.fmt.num(s.val)}</div>
+        <div class="funnel-value">${SMJ.fmt.num(s.val)}</div>
       </div>
     `;
   }).join('') + `
     <div class="d-flex gap-8 mt-12 flex-wrap justify-content-center">
-      <span class="stat-chip">Success Rate: <strong>${IMSERV.fmt.pct(kpis.completion_rate)}</strong></span>
-      <span class="stat-chip">Average Contacts Per Customer: <strong>${kpis.avg_contacts_per_customer?.toFixed(2) || '—'}</strong></span>
+      <span class="stat-chip">Success Rate: <strong>${SMJ.fmt.pct(kpis.completion_rate)}</strong></span>
+      <span class="stat-chip">Average Contacts Per Customer: <strong>${kpis.avg_contacts_per_customer?.toFixed(2) || 'â€”'}</strong></span>
     </div>
   `;
 }
@@ -213,7 +213,7 @@ function renderFunnelMetrics(funnel) {
   const reasonHtml = reasons.length ? reasons.map(r => `
     <div style="display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; align-items:center;">
       <span style="font-size:11px; color:var(--text-secondary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${r.reason}</span>
-      <strong style="font-size:12px; color:var(--text-primary);">${IMSERV.fmt.num(r.count)}</strong>
+      <strong style="font-size:12px; color:var(--text-primary);">${SMJ.fmt.num(r.count)}</strong>
       <div style="grid-column:1 / -1; height:4px; border-radius:999px; background:rgba(255,255,255,0.06); overflow:hidden;">
         <div style="height:100%; width:${Math.max(4, Math.min(100, r.pct || 0))}%; background:rgba(2,194,183,0.75);"></div>
       </div>
@@ -228,35 +228,35 @@ function renderFunnelMetrics(funnel) {
         <!-- Customer data loaded into dialler -->
         <div style="background: linear-gradient(135deg, rgba(2,194,183,0.05), rgba(2,194,183,0.15)); border: 1px solid rgba(2,194,183,0.2); border-radius: 8px 0 0 8px; display:flex; flex-direction:column; justify-content:center; align-items:center; position:relative; min-width:0;">
           <div style="font-size:12px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; font-weight:600; text-align:center;">Customer Data Loaded Into Dialler</div>
-          <div style="font-size:26px; font-weight:800; color:var(--info);">${IMSERV.fmt.num(uniqueCustomers)}</div>
+          <div style="font-size:26px; font-weight:800; color:var(--info);">${SMJ.fmt.num(uniqueCustomers)}</div>
           <div style="position:absolute; right:-12px; top:50%; transform:translateY(-50%); width:0; height:0; border-top: 16px solid transparent; border-bottom: 16px solid transparent; border-left: 12px solid rgba(2,194,183,0.3); z-index:2;"></div>
         </div>
 
         <!-- Contact attempts -->
         <div style="background: linear-gradient(135deg, rgba(2,194,183,0.08), rgba(2,194,183,0.16)); border: 1px solid rgba(2,194,183,0.28); display:flex; flex-direction:column; justify-content:center; align-items:center; position:relative; min-width:0;">
           <div style="font-size:12px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; font-weight:600; text-align:center;">Contact Attempts</div>
-          <div style="font-size:22px; font-weight:800; color:var(--info);">${IMSERV.fmt.num(f.contacts)}</div>
+          <div style="font-size:22px; font-weight:800; color:var(--info);">${SMJ.fmt.num(f.contacts)}</div>
           <div style="position:absolute; right:-12px; top:50%; transform:translateY(-50%); width:0; height:0; border-top: 16px solid transparent; border-bottom: 16px solid transparent; border-left: 12px solid rgba(2,194,183,0.4); z-index:2;"></div>
         </div>
 
         <!-- Appointments booked -->
         <div style="background: linear-gradient(135deg, rgba(2,194,183,0.06), rgba(2,194,183,0.14)); border: 1px solid rgba(2,194,183,0.24); display:flex; flex-direction:column; justify-content:center; align-items:center; position:relative; min-width:0;">
           <div style="font-size:12px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; font-weight:600; text-align:center;">Appointments Booked</div>
-          <div style="font-size:26px; font-weight:800; color:var(--info);">${IMSERV.fmt.num(appointmentsBooked)}</div>
+          <div style="font-size:26px; font-weight:800; color:var(--info);">${SMJ.fmt.num(appointmentsBooked)}</div>
           <div style="position:absolute; right:-12px; top:50%; transform:translateY(-50%); width:0; height:0; border-top: 16px solid transparent; border-bottom: 16px solid transparent; border-left: 12px solid rgba(2,194,183,0.32); z-index:2;"></div>
         </div>
 
         <!-- Total visits -->
         <div style="background: linear-gradient(135deg, rgba(2,129,120,0.05), rgba(2,129,120,0.15)); border: 1px solid rgba(2,129,120,0.2); display:flex; flex-direction:column; justify-content:center; align-items:center; position:relative; min-width:0;">
           <div style="font-size:12px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; font-weight:600; text-align:center;">Total Visits</div>
-          <div style="font-size:26px; font-weight:800; color:var(--ok);">${IMSERV.fmt.num(visits)}</div>
+          <div style="font-size:26px; font-weight:800; color:var(--ok);">${SMJ.fmt.num(visits)}</div>
           <div style="position:absolute; right:-12px; top:50%; transform:translateY(-50%); width:0; height:0; border-top: 16px solid transparent; border-bottom: 16px solid transparent; border-left: 12px solid rgba(2,129,120,0.3); z-index:2;"></div>
         </div>
 
         <!-- Executed successfully -->
         <div style="background: linear-gradient(135deg, rgba(2,129,120,0.15), rgba(2,129,120,0.25)); border: 1px solid rgba(2,129,120,0.4); border-radius: 0 8px 8px 0; display:flex; flex-direction:column; justify-content:center; align-items:center; box-shadow: inset 0 0 12px rgba(2,129,120,0.1); min-width:0;">
           <div style="font-size:12px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; font-weight:600; text-align:center;">Executed Successfully</div>
-          <div style="font-size:26px; font-weight:800; color:var(--ok);">${IMSERV.fmt.num(completions)}</div>
+          <div style="font-size:26px; font-weight:800; color:var(--ok);">${SMJ.fmt.num(completions)}</div>
         </div>
 
       </div>
@@ -268,14 +268,14 @@ function renderFunnelMetrics(funnel) {
           <div style="height:18px; width:50%; border-right:2px dashed rgba(251,130,129,0.35); border-bottom:2px dashed rgba(251,130,129,0.35); border-bottom-right-radius:10px; margin-top:-8px;"></div>
           <div style="background: rgba(251, 130, 129, 0.05); border: 1px solid rgba(251, 130, 129, 0.15); border-left: 4px solid var(--crit); padding: 12px 14px; border-radius: 8px;">
             <div style="font-size:11px; color:var(--text-muted); text-transform:uppercase; font-weight:700; letter-spacing: 0.5px;">Appointments Cancelled (D-1)</div>
-            <div style="font-size:20px; font-weight:800; color:var(--crit); margin-top:2px;">${IMSERV.fmt.num(f.cancellations)}</div>
+            <div style="font-size:20px; font-weight:800; color:var(--crit); margin-top:2px;">${SMJ.fmt.num(f.cancellations)}</div>
           </div>
         </div>
         <div>
           <div style="height:18px; width:50%; border-right:2px dashed rgba(244,210,90,0.45); border-bottom:2px dashed rgba(244,210,90,0.45); border-bottom-right-radius:10px; margin-top:-8px;"></div>
           <div style="background: rgba(244, 210, 90, 0.05); border: 1px solid rgba(244, 210, 90, 0.15); border-left: 4px solid var(--warn); padding: 12px 14px; border-radius: 8px;">
             <div style="font-size:11px; color:var(--text-muted); text-transform:uppercase; font-weight:700; letter-spacing: 0.5px;">Appointments Aborted On The Day Of Visit</div>
-            <div style="font-size:20px; font-weight:800; color:var(--warn); margin-top:2px;">${IMSERV.fmt.num(f.aborts)}</div>
+            <div style="font-size:20px; font-weight:800; color:var(--warn); margin-top:2px;">${SMJ.fmt.num(f.aborts)}</div>
           </div>
         </div>
         <div style="grid-column:5;">
@@ -283,7 +283,7 @@ function renderFunnelMetrics(funnel) {
           <div style="background: rgba(2, 194, 183, 0.05); border: 1px solid rgba(2, 194, 183, 0.15); border-left: 4px solid var(--info); padding: 12px 14px; border-radius: 8px;">
             <div style="display:flex; justify-content:space-between; gap:12px; align-items:baseline;">
               <div style="font-size:11px; color:var(--text-muted); text-transform:uppercase; font-weight:700; letter-spacing: 0.5px;">Not Executed After Visit</div>
-              <div style="font-size:20px; font-weight:800; color:var(--info);">${IMSERV.fmt.num(notCompleted)}</div>
+              <div style="font-size:20px; font-weight:800; color:var(--info);">${SMJ.fmt.num(notCompleted)}</div>
             </div>
             <div style="display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:10px; margin-top:10px;">
               ${reasonHtml}
@@ -294,17 +294,17 @@ function renderFunnelMetrics(funnel) {
     </div>
 
     <div class="mt-8" style="border-top: 1px solid var(--border); padding-top: 16px; display:flex; gap: 16px; justify-content:center; flex-wrap:wrap;">
-      <div class="stat-chip" style="font-size: 13px; padding: 6px 14px; background: var(--bg-card); border:1px solid var(--border);">Total Visit Rate: <strong style="color:var(--text-primary); margin-left:4px;">${IMSERV.fmt.pct(funnel.visit_rate)}</strong></div>
-      <div class="stat-chip" style="font-size: 13px; padding: 6px 14px; background: rgba(2,129,120,0.05); border:1px solid rgba(2,129,120,0.1);">Success Rate: <strong style="color:var(--ok); margin-left:4px;">${IMSERV.fmt.pct(funnel.completion_rate)}</strong></div>
-      <div class="stat-chip" style="font-size: 13px; padding: 6px 14px; background: rgba(2,129,120,0.05); border:1px solid rgba(2,129,120,0.1);">Executed / Total Visits: <strong style="color:var(--ok); margin-left:4px;">${IMSERV.fmt.pct(funnel.visit_success_rate)}</strong></div>
-      <div class="stat-chip" style="font-size: 13px; padding: 6px 14px; background: rgba(2,194,183,0.05); border:1px solid rgba(2,194,183,0.1);">Execution Gap: <strong style="color:var(--info); margin-left:4px;">${IMSERV.fmt.num(notCompleted)}</strong></div>
+      <div class="stat-chip" style="font-size: 13px; padding: 6px 14px; background: var(--bg-card); border:1px solid var(--border);">Total Visit Rate: <strong style="color:var(--text-primary); margin-left:4px;">${SMJ.fmt.pct(funnel.visit_rate)}</strong></div>
+      <div class="stat-chip" style="font-size: 13px; padding: 6px 14px; background: rgba(2,129,120,0.05); border:1px solid rgba(2,129,120,0.1);">Success Rate: <strong style="color:var(--ok); margin-left:4px;">${SMJ.fmt.pct(funnel.completion_rate)}</strong></div>
+      <div class="stat-chip" style="font-size: 13px; padding: 6px 14px; background: rgba(2,129,120,0.05); border:1px solid rgba(2,129,120,0.1);">Executed / Total Visits: <strong style="color:var(--ok); margin-left:4px;">${SMJ.fmt.pct(funnel.visit_success_rate)}</strong></div>
+      <div class="stat-chip" style="font-size: 13px; padding: 6px 14px; background: rgba(2,194,183,0.05); border:1px solid rgba(2,194,183,0.1);">Execution Gap: <strong style="color:var(--info); margin-left:4px;">${SMJ.fmt.num(notCompleted)}</strong></div>
       <div class="stat-chip" style="font-size: 13px; padding: 6px 14px; background: var(--bg-card); border:1px solid var(--border);">Average Contacts Per Customer: <strong style="color:var(--text-primary); margin-left:4px;">${funnel.avg_contacts_per_customer}</strong></div>
     </div>
   `;
 }
 
 function renderJourneyTrend(data) {
-  IMSERV.destroyChart('journey-trend');
+  SMJ.destroyChart('journey-trend');
   const container = document.getElementById('journey-trend-chart');
   if (!container) return;
 
@@ -358,12 +358,12 @@ function renderJourneyTrend(data) {
           <div class="season-ring">
             <strong>${p.name}</strong>
           </div>
-          <span class="season-ring-value">${IMSERV.fmt.pct(p.yieldPct)}</span>
+          <span class="season-ring-value">${SMJ.fmt.pct(p.yieldPct)}</span>
         </div>
         <div class="season-copy">
           <span>${p.weeks} weeks</span>
-          <strong>${IMSERV.fmt.num(p.completions)}</strong>
-          <em>${IMSERV.fmt.num(p.cancelled)} cancelled, ${IMSERV.fmt.num(p.aborted)} aborted</em>
+          <strong>${SMJ.fmt.num(p.completions)}</strong>
+          <em>${SMJ.fmt.num(p.cancelled)} cancelled, ${SMJ.fmt.num(p.aborted)} aborted</em>
         </div>
       </div>
     `;
@@ -373,21 +373,21 @@ function renderJourneyTrend(data) {
     <div class="season-stage">
       <div class="season-summary">
         <span>Latest executed successfully</span>
-        <strong>${IMSERV.fmt.num(recentCompletion)}</strong>
-        <em>${IMSERV.fmt.num(recentVisit)} total visits</em>
+        <strong>${SMJ.fmt.num(recentCompletion)}</strong>
+        <em>${SMJ.fmt.num(recentVisit)} total visits</em>
       </div>
       <div class="season-pulse-grid">${periodHtml}</div>
     </div>
     <div class="rhythm-readouts">
-      <div><span>Best success rate quarter</span><strong>${strongest.name} at ${IMSERV.fmt.pct(strongest.yieldPct)}</strong></div>
-      <div><span>Highest appointment fallout quarter</span><strong>${hottest.name} at ${IMSERV.fmt.pct(hottest.lossPct)}</strong></div>
-      <div><span>Latest appointment fallout</span><strong>${IMSERV.fmt.num(recentLoss)}</strong></div>
+      <div><span>Best success rate quarter</span><strong>${strongest.name} at ${SMJ.fmt.pct(strongest.yieldPct)}</strong></div>
+      <div><span>Highest appointment fallout quarter</span><strong>${hottest.name} at ${SMJ.fmt.pct(hottest.lossPct)}</strong></div>
+      <div><span>Latest appointment fallout</span><strong>${SMJ.fmt.num(recentLoss)}</strong></div>
     </div>
     <div class="weekly-flow-strip">
-      <div><span>Total visits</span><strong>${IMSERV.fmt.num(recentVisit)}</strong></div>
-      <div><span>Appointments Cancelled (D-1)</span><strong>${IMSERV.fmt.num(recentCancelled)}</strong></div>
-      <div><span>Appointments Aborted</span><strong>${IMSERV.fmt.num(recentAborted)}</strong></div>
-      <div><span>Success rate</span><strong>${IMSERV.fmt.pct(recentSuccessRate)}</strong></div>
+      <div><span>Total visits</span><strong>${SMJ.fmt.num(recentVisit)}</strong></div>
+      <div><span>Appointments Cancelled (D-1)</span><strong>${SMJ.fmt.num(recentCancelled)}</strong></div>
+      <div><span>Appointments Aborted</span><strong>${SMJ.fmt.num(recentAborted)}</strong></div>
+      <div><span>Success rate</span><strong>${SMJ.fmt.pct(recentSuccessRate)}</strong></div>
     </div>
   `;
 }
@@ -408,7 +408,7 @@ function renderRegionalHeatmapLegacy(data) {
           <div class="regional-radar-orb" style="--completion:${completionRate * 3.6}deg; --loss:${lossRate * 3.6}deg; --drift:${orbitOffset}px;">
             <span class="regional-loss-spark cancel"></span>
             <span class="regional-loss-spark abort"></span>
-            <strong>${IMSERV.fmt.pct(r.completion_rate)}</strong>
+            <strong>${SMJ.fmt.pct(r.completion_rate)}</strong>
             <em>${r.region_code}</em>
           </div>
           <div class="regional-radar-copy">
@@ -417,9 +417,9 @@ function renderRegionalHeatmapLegacy(data) {
               <span class="rag ${r.rag}">${r.rag}</span>
             </div>
             <div class="regional-radar-metrics">
-              <span><b>${IMSERV.fmt.num(r.completions)}</b> executed successfully</span>
-              <span><b>${IMSERV.fmt.num(r.requests)}</b> appointments booked</span>
-              <span><b>${IMSERV.fmt.num(lossTotal)}</b> cancelled + aborted</span>
+              <span><b>${SMJ.fmt.num(r.completions)}</b> executed successfully</span>
+              <span><b>${SMJ.fmt.num(r.requests)}</b> appointments booked</span>
+              <span><b>${SMJ.fmt.num(lossTotal)}</b> cancelled + aborted</span>
             </div>
           </div>
         </div>
@@ -428,7 +428,7 @@ function renderRegionalHeatmapLegacy(data) {
     return;
   }
   if (!data || !data.length) {
-    container.innerHTML = '<div class="empty-state" style="grid-column: 1 / -1;"><div class="empty-icon">📊</div><div class="empty-title">No data available</div></div>';
+    container.innerHTML = '<div class="empty-state" style="grid-column: 1 / -1;"><div class="empty-icon">ðŸ“Š</div><div class="empty-title">No data available</div></div>';
     return;
   }
 
@@ -448,7 +448,7 @@ function renderRegionalHeatmapLegacy(data) {
         <div style="display:flex; gap: 15px; align-items:center; margin-bottom: 20px; background: ${bgColor}; padding: 12px; border-radius: 8px;">
            <div style="flex:1;">
               <div style="font-size:11px; color:var(--text-muted); text-transform:uppercase; font-weight:600; letter-spacing:0.5px;">Success Rate</div>
-              <div style="font-size:28px; font-weight:800; color:var(--text-primary); line-height:1.2;">${IMSERV.fmt.pct(r.completion_rate)}</div>
+              <div style="font-size:28px; font-weight:800; color:var(--text-primary); line-height:1.2;">${SMJ.fmt.pct(r.completion_rate)}</div>
               <div style="height:6px; background:rgba(255,255,255,0.1); border-radius:3px; margin-top:8px; overflow:hidden;">
                  <div style="height:100%; width:${r.completion_rate}%; background:${borderColor}; border-radius:3px;"></div>
               </div>
@@ -458,19 +458,19 @@ function renderRegionalHeatmapLegacy(data) {
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
            <div style="background:var(--bg-surface); padding:10px; border-radius:6px; border: 1px solid var(--border);">
               <div style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:600;">Appointments Booked</div>
-              <div style="font-size:15px; font-weight:700; color:var(--text-primary);">${IMSERV.fmt.num(r.requests)}</div>
+              <div style="font-size:15px; font-weight:700; color:var(--text-primary);">${SMJ.fmt.num(r.requests)}</div>
            </div>
            <div style="background:var(--bg-surface); padding:10px; border-radius:6px; border: 1px solid var(--border);">
               <div style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:600;">Executed Successfully</div>
-              <div style="font-size:15px; font-weight:700; color:var(--ok);">${IMSERV.fmt.num(r.completions)}</div>
+              <div style="font-size:15px; font-weight:700; color:var(--ok);">${SMJ.fmt.num(r.completions)}</div>
            </div>
            <div style="background:var(--bg-surface); padding:10px; border-radius:6px; border: 1px solid var(--border);">
               <div style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:600;">Cancelled (D-1)</div>
-              <div style="font-size:15px; font-weight:700; color:var(--crit);">${IMSERV.fmt.num(r.cancellations)}</div>
+              <div style="font-size:15px; font-weight:700; color:var(--crit);">${SMJ.fmt.num(r.cancellations)}</div>
            </div>
            <div style="background:var(--bg-surface); padding:10px; border-radius:6px; border: 1px solid var(--border);">
               <div style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:600;">Aborted On Day</div>
-              <div style="font-size:15px; font-weight:700; color:var(--warn);">${IMSERV.fmt.num(r.aborts)}</div>
+              <div style="font-size:15px; font-weight:700; color:var(--warn);">${SMJ.fmt.num(r.aborts)}</div>
            </div>
         </div>
       </div>
@@ -506,17 +506,17 @@ function renderRegionalHeatmap(data) {
     const size = 42 + ((r.requests || 0) / maxRequests) * 26;
 
     return `
-      <button class="region-star ${tone}" style="--x:${x}%; --y:${y}%; --s:${size}px;" title="${r.region_name || r.region_code}: ${IMSERV.fmt.pct(r.completion_rate)} success rate, ${IMSERV.fmt.num(lossTotal)} cancelled + aborted">
+      <button class="region-star ${tone}" style="--x:${x}%; --y:${y}%; --s:${size}px;" title="${r.region_name || r.region_code}: ${SMJ.fmt.pct(r.completion_rate)} success rate, ${SMJ.fmt.num(lossTotal)} cancelled + aborted">
         <strong>${r.region_code}</strong>
-        <span>${IMSERV.fmt.pct(r.completion_rate)}</span>
+        <span>${SMJ.fmt.pct(r.completion_rate)}</span>
       </button>
     `;
   }).join('');
 
   const focus = [
-    { label: 'Strongest', region: strongest, metric: IMSERV.fmt.pct(strongest.completion_rate) },
-    { label: 'Needs focus', region: watch, metric: IMSERV.fmt.pct(watch.completion_rate) },
-    { label: 'Highest appointments booked', region: busiest, metric: IMSERV.fmt.num(busiest.requests) },
+    { label: 'Strongest', region: strongest, metric: SMJ.fmt.pct(strongest.completion_rate) },
+    { label: 'Needs focus', region: watch, metric: SMJ.fmt.pct(watch.completion_rate) },
+    { label: 'Highest appointments booked', region: busiest, metric: SMJ.fmt.num(busiest.requests) },
   ].map(item => `
     <div class="region-focus-item">
       <span>${item.label}</span>
@@ -532,8 +532,8 @@ function renderRegionalHeatmap(data) {
         <div class="region-orbit two"></div>
         <div class="region-orbit-core">
           <span>Network avg</span>
-          <strong>${IMSERV.fmt.pct(averageCompletion)}</strong>
-          <em>${IMSERV.fmt.num(totalLosses)} cancelled + aborted</em>
+          <strong>${SMJ.fmt.pct(averageCompletion)}</strong>
+          <em>${SMJ.fmt.num(totalLosses)} cancelled + aborted</em>
         </div>
         ${nodes}
       </div>
@@ -593,10 +593,10 @@ function renderSupplierBehaviour(data) {
       <button
         class="supplier-node ${tone}"
         style="--x:${x}%; --y:${y}%; --s:${size}px; --delay:${idx * 28}ms;"
-        title="${name}: ${IMSERV.fmt.num(s.requests)} requests, ${IMSERV.fmt.pct(s.booking_rate)} booked, ${IMSERV.fmt.pct(s.visit_success_rate)} visit success"
+        title="${name}: ${SMJ.fmt.num(s.requests)} requests, ${SMJ.fmt.pct(s.booking_rate)} booked, ${SMJ.fmt.pct(s.visit_success_rate)} visit success"
       >
         <strong>${initials || 'S'}</strong>
-        <span>${IMSERV.fmt.pct(score)}</span>
+        <span>${SMJ.fmt.pct(score)}</span>
       </button>
     `;
   }).join('');
@@ -616,9 +616,9 @@ function renderSupplierBehaviour(data) {
           <span class="supplier-booking-bar" style="width:${bookingWidth}%"></span>
         </div>
         <div class="supplier-lane-metrics">
-          <span>${IMSERV.fmt.num(s.requests)} requests</span>
-          <span>${IMSERV.fmt.pct(s.booking_rate)} booked</span>
-          <span>${IMSERV.fmt.pct(s.fallout_rate)} fallout</span>
+          <span>${SMJ.fmt.num(s.requests)} requests</span>
+          <span>${SMJ.fmt.pct(s.booking_rate)} booked</span>
+          <span>${SMJ.fmt.pct(s.fallout_rate)} fallout</span>
         </div>
       </div>
     `;
@@ -627,15 +627,15 @@ function renderSupplierBehaviour(data) {
   const watchlist = (data.watchlist || []).slice(0, 4).map(s => `
     <div class="supplier-watch-item ${toneFor(s)}">
       <span>${journeyEscapeHtml(s.supplier_name)}</span>
-      <strong>${IMSERV.fmt.pct(s.fallout_rate)}</strong>
-      <em>${IMSERV.fmt.num(s.unresolved)} unresolved, ${IMSERV.fmt.num(s.cancellations + s.aborts)} fallout</em>
+      <strong>${SMJ.fmt.pct(s.fallout_rate)}</strong>
+      <em>${SMJ.fmt.num(s.unresolved)} unresolved, ${SMJ.fmt.num(s.cancellations + s.aborts)} fallout</em>
     </div>
   `).join('');
 
   const leaders = (data.leaderboard || []).slice(0, 4).map(s => `
     <div class="supplier-leader-chip">
       <span>${journeyEscapeHtml(s.supplier_name)}</span>
-      <strong>${IMSERV.fmt.pct(s.visit_success_rate)}</strong>
+      <strong>${SMJ.fmt.pct(s.visit_success_rate)}</strong>
     </div>
   `).join('');
 
@@ -654,19 +654,19 @@ function renderSupplierBehaviour(data) {
       <div class="supplier-scoreboard">
         <div>
           <span>Suppliers</span>
-          <strong>${IMSERV.fmt.num(data.supplier_count)}</strong>
+          <strong>${SMJ.fmt.num(data.supplier_count)}</strong>
         </div>
         <div>
           <span>Bookings</span>
-          <strong>${IMSERV.fmt.num(totals.bookings)}</strong>
+          <strong>${SMJ.fmt.num(totals.bookings)}</strong>
         </div>
         <div>
           <span>Visit Success</span>
-          <strong>${IMSERV.fmt.pct(totals.visit_success_rate)}</strong>
+          <strong>${SMJ.fmt.pct(totals.visit_success_rate)}</strong>
         </div>
         <div>
           <span>Fallout</span>
-          <strong>${IMSERV.fmt.pct(totals.fallout_rate)}</strong>
+          <strong>${SMJ.fmt.pct(totals.fallout_rate)}</strong>
         </div>
       </div>
       <div class="supplier-leaders">
@@ -706,23 +706,23 @@ function updateAiTriggerState(data) {
 }
 
 async function loadChannelComparison(showLoading = true) {
-  const region = IMSERV.getRegion();
-  const year   = IMSERV.getYear();
-  if (showLoading) IMSERV.setLoading('channel-comparison-grid', true);
-  const kpis = await IMSERV.apiFetch('/api/forecasting/channel-kpis?region=' + region + '&year=' + year);
+  const region = SMJ.getRegion();
+  const year   = SMJ.getYear();
+  if (showLoading) SMJ.setLoading('channel-comparison-grid', true);
+  const kpis = await SMJ.apiFetch('/api/forecasting/channel-kpis?region=' + region + '&year=' + year);
   if (!kpis) {
-    if (showLoading) IMSERV.setLoading('channel-comparison-grid', false);
+    if (showLoading) SMJ.setLoading('channel-comparison-grid', false);
     return;
   }
   const container = document.getElementById('channel-comparison-grid');
   if (!container) {
-    if (showLoading) IMSERV.setLoading('channel-comparison-grid', false);
+    if (showLoading) SMJ.setLoading('channel-comparison-grid', false);
     return;
   }
   const channels = kpis.channel_breakdown || [];
   if (!channels.length) {
      container.innerHTML = '<div class="empty-state"><div class="empty-title">No data available</div></div>';
-     if (showLoading) IMSERV.setLoading('channel-comparison-grid', false);
+     if (showLoading) SMJ.setLoading('channel-comparison-grid', false);
      return;
   }
 
@@ -791,19 +791,19 @@ async function loadChannelComparison(showLoading = true) {
       <button
         class="channel-orb"
         style="--x:${pos.x}%; --y:${pos.y}%; --size:${size}px; --channel-color:${colour}; --conversion:${visitSuccess * 3.6}deg; --abandon:${Math.max(10, abandon * 3.6)}deg;"
-        title="${safeName}: ${IMSERV.fmt.num(c.volume)} contact attempts, ${IMSERV.fmt.num(c.bookings)} appointments booked, ${IMSERV.fmt.pct(visitSuccess)} to total visits"
+        title="${safeName}: ${SMJ.fmt.num(c.volume)} contact attempts, ${SMJ.fmt.num(c.bookings)} appointments booked, ${SMJ.fmt.pct(visitSuccess)} to total visits"
         aria-label="${safeName} channel signal"
       >
         <span class="channel-orb-ring"></span>
         <span class="channel-orb-core">
           <span class="channel-orb-code">${channelCode(c.channel)}</span>
           <span class="channel-orb-name">${safeName}</span>
-          <span class="channel-orb-volume">${IMSERV.fmt.num(c.bookings)}</span>
-          <span class="channel-orb-success">${IMSERV.fmt.pct(visitSuccess)}</span>
+          <span class="channel-orb-volume">${SMJ.fmt.num(c.bookings)}</span>
+          <span class="channel-orb-success">${SMJ.fmt.pct(visitSuccess)}</span>
         </span>
-        <span class="channel-orb-marker" title="${IMSERV.fmt.pct(abandon)} abandoned"></span>
+        <span class="channel-orb-marker" title="${SMJ.fmt.pct(abandon)} abandoned"></span>
         <span class="channel-orb-metrics">
-          <strong>${IMSERV.fmt.num(successfulVisits)}</strong>
+          <strong>${SMJ.fmt.num(successfulVisits)}</strong>
           <em>total visits</em>
           <small>${bookingShare.toFixed(1)}% of appointments booked</small>
           <small>${share.toFixed(1)}% of contact attempts</small>
@@ -825,8 +825,8 @@ async function loadChannelComparison(showLoading = true) {
       <div class="booking-core">
         <div class="booking-core-ring"></div>
         <div class="booking-core-label">Appointments Booked Core</div>
-        <div class="booking-core-value">${IMSERV.fmt.num(totalBookings)}</div>
-        <div class="booking-core-sub">${IMSERV.fmt.pct(blendedVisitSuccess)} to total visits</div>
+        <div class="booking-core-value">${SMJ.fmt.num(totalBookings)}</div>
+        <div class="booking-core-sub">${SMJ.fmt.pct(blendedVisitSuccess)} to total visits</div>
       </div>
 
       ${nodes}
@@ -836,24 +836,24 @@ async function loadChannelComparison(showLoading = true) {
       <div class="channel-story-pill dominant">
         <span>Dominant intake</span>
         <strong>${escapeHtml(insight.channel)}</strong>
-        <em>${IMSERV.fmt.num(insight.volume)} contact attempts</em>
+        <em>${SMJ.fmt.num(insight.volume)} contact attempts</em>
       </div>
       <div class="channel-story-pill efficient">
         <span>Most efficient</span>
         <strong>${escapeHtml(bestConversion.channel)}</strong>
-        <em>${IMSERV.fmt.pct(visitSuccessFor(bestConversion))} to total visits</em>
+        <em>${SMJ.fmt.pct(visitSuccessFor(bestConversion))} to total visits</em>
       </div>
       <div class="channel-story-pill friction">
         <span>Highest friction</span>
         <strong>${escapeHtml(mostAbandoned.channel)}</strong>
-        <em>${IMSERV.fmt.pct(mostAbandoned.abandon_pct)} abandoned</em>
+        <em>${SMJ.fmt.pct(mostAbandoned.abandon_pct)} abandoned</em>
       </div>
       <div class="channel-story-pill">
         <span>Blended abandon</span>
-        <strong>${IMSERV.fmt.pct(blendedAbandon)}</strong>
+        <strong>${SMJ.fmt.pct(blendedAbandon)}</strong>
         <em>across channels</em>
       </div>
     </div>
   `;
-  if (showLoading) IMSERV.setLoading('channel-comparison-grid', false);
+  if (showLoading) SMJ.setLoading('channel-comparison-grid', false);
 }

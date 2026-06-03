@@ -1,5 +1,5 @@
-"""
-IMSERV Platform — Field Operations & Engineer Planning Engine
+﻿"""
+Smart Meter Journey â€” Field Operations & Engineer Planning Engine
 Engineer scheduling, patch-level capacity planning, utilisation optimisation,
 AI-driven understaffing prediction and workforce balancing.
 Mirrors DAA's three-tier planning + OR-Tools philosophy.
@@ -15,28 +15,28 @@ from engine.ingestion import (
     to_int, to_float, safe_pct
 )
 
-# ─────────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-UTILISATION_THRESHOLDS = {"Green": 75, "Amber": 90}  # % — above 90 = Red
+UTILISATION_THRESHOLDS = {"Green": 75, "Amber": 90}  # % â€” above 90 = Red
 
-# Seasonal absence shape factors by ISO week (Mon–Fri basis, UK field ops pattern).
+# Seasonal absence shape factors by ISO week (Monâ€“Fri basis, UK field ops pattern).
 # Normalised so August peak = 1.0; slider value (absence_rate_pct) sets the peak rate.
 # e.g. at 4% peak: Aug absent = base_fte * 0.04 * 1.00, Mar/Oct = base_fte * 0.04 * 0.48.
 PLANNING_BASE_FTE_2026 = 203
 
 _SEASONAL_ABSENCE_FACTORS = {
-    **{w: 0.82 for w in range(1,  5)},   # Jan  – post-Christmas / New Year
-    **{w: 0.64 for w in range(5,  9)},   # Feb  – steady
-    **{w: 0.48 for w in range(9, 14)},   # Mar  – low, pre-Easter
-    **{w: 0.73 for w in range(14, 18)},  # Apr  – Easter / bank holidays
-    **{w: 0.55 for w in range(18, 22)},  # May  – moderate
-    **{w: 0.67 for w in range(22, 27)},  # Jun  – early summer leave
-    **{w: 0.94 for w in range(27, 31)},  # Jul  – peak school summer holidays
-    **{w: 1.00 for w in range(31, 36)},  # Aug  – peak summer (= defined max)
-    **{w: 0.52 for w in range(36, 40)},  # Sep  – post-summer return
-    **{w: 0.48 for w in range(40, 44)},  # Oct  – low season
-    **{w: 0.55 for w in range(44, 48)},  # Nov  – steady
-    **{w: 0.88 for w in range(48, 54)},  # Dec  – Christmas / year-end
+    **{w: 0.82 for w in range(1,  5)},   # Jan  â€“ post-Christmas / New Year
+    **{w: 0.64 for w in range(5,  9)},   # Feb  â€“ steady
+    **{w: 0.48 for w in range(9, 14)},   # Mar  â€“ low, pre-Easter
+    **{w: 0.73 for w in range(14, 18)},  # Apr  â€“ Easter / bank holidays
+    **{w: 0.55 for w in range(18, 22)},  # May  â€“ moderate
+    **{w: 0.67 for w in range(22, 27)},  # Jun  â€“ early summer leave
+    **{w: 0.94 for w in range(27, 31)},  # Jul  â€“ peak school summer holidays
+    **{w: 1.00 for w in range(31, 36)},  # Aug  â€“ peak summer (= defined max)
+    **{w: 0.52 for w in range(36, 40)},  # Sep  â€“ post-summer return
+    **{w: 0.48 for w in range(40, 44)},  # Oct  â€“ low season
+    **{w: 0.55 for w in range(44, 48)},  # Nov  â€“ steady
+    **{w: 0.88 for w in range(48, 54)},  # Dec  â€“ Christmas / year-end
 }
 
 
@@ -115,7 +115,7 @@ def _weekdays_from_week_start(week_start: str, year: int, week: int) -> list:
             start = date(year, 12, 29)
     return [start + timedelta(days=offset) for offset in range(5)]
 
-# ─── Public API ───────────────────────────────────────────────────────────────
+# â”€â”€â”€ Public API â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def get_field_ops_kpis(region_code: str = None, year: int = 2025) -> dict:
     """
@@ -193,7 +193,7 @@ def get_field_ops_kpis(region_code: str = None, year: int = 2025) -> dict:
 
 def get_region_capacity_matrix(year: int = 2025) -> list:
     """
-    Region × week capacity vs demand matrix with RAG status.
+    Region Ã— week capacity vs demand matrix with RAG status.
 
     Returns:
         list of weekly capacity records with utilisation and RAG
@@ -251,9 +251,9 @@ def get_patch_level_plan(region_code: str, week_number: int = None, year: int = 
 
         ai_flag = None
         if util > 90:
-            ai_flag = {"type": "understaffing", "message": f"Patch {r['patch_code']} exceeds 90% utilisation — risk of missed jobs"}
+            ai_flag = {"type": "understaffing", "message": f"Patch {r['patch_code']} exceeds 90% utilisation â€” risk of missed jobs"}
         elif util < 40 and gap > 10:
-            ai_flag = {"type": "overstaffing", "message": f"Patch {r['patch_code']} underutilised — consider rebalancing to high-demand patches"}
+            ai_flag = {"type": "overstaffing", "message": f"Patch {r['patch_code']} underutilised â€” consider rebalancing to high-demand patches"}
 
         result.append({
             "patch_code":          r["patch_code"],
@@ -358,11 +358,11 @@ def predict_understaffing(region_code: str, look_ahead_weeks: int = 8) -> list:
         recommendation = ""
         if util > 95:
             engineers_needed = math.ceil((dem_forecast - cap_forecast) / 4)
-            recommendation = f"Deploy {engineers_needed} additional engineers to {region_code} — demand exceeds capacity by {abs(gap)} jobs/week"
+            recommendation = f"Deploy {engineers_needed} additional engineers to {region_code} â€” demand exceeds capacity by {abs(gap)} jobs/week"
         elif util > 85:
-            recommendation = f"Monitor closely — consider pulling resource from lower-demand patches in week {week_n}"
+            recommendation = f"Monitor closely â€” consider pulling resource from lower-demand patches in week {week_n}"
         elif util < 55:
-            recommendation = f"Overstaffed — redeploy engineers to higher demand regions in week {week_n}"
+            recommendation = f"Overstaffed â€” redeploy engineers to higher demand regions in week {week_n}"
 
         forecasts.append({
             "week_number":      week_n,
@@ -693,7 +693,7 @@ def optimise_workforce_allocation(
     jobs_day    = _clamp_number(jobs_per_fte_day, 4, 0.5, 8, float)
     absence     = _clamp_number(absence_rate_pct, 15, 0, 60, float) / 100.0
 
-    # ── Pull demand-forecast data ─────────────────────────────────────────────
+    # â”€â”€ Pull demand-forecast data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     forecast = get_capacity_forecast_2026(
         region_code=None,
         target_utilisation_pct=target_utilisation_pct,
@@ -708,7 +708,7 @@ def optimise_workforce_allocation(
         kpis = get_field_ops_kpis(rc, year)
         engineer_counts[rc] = kpis["total_engineers"]
 
-    # ── Build region state ───────────────────────────────────────────────────
+    # â”€â”€ Build region state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     region_state = {}
     for rc in region_codes:
         fr = forecast_regions.get(rc, {})
@@ -732,7 +732,7 @@ def optimise_workforce_allocation(
             "fte_gap_after":        fte_gap,
         }
 
-    # ── Classify sources (surplus) and destinations (deficit) ────────────────
+    # â”€â”€ Classify sources (surplus) and destinations (deficit) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     sources      = []
     destinations = []
     
@@ -754,7 +754,7 @@ def optimise_workforce_allocation(
     sources.sort(key=lambda x: x["gap"], reverse=True)
     destinations.sort(key=lambda x: x["gap"])
 
-    # ── Greedy rebalancing loop ───────────────────────────────────────────────
+    # â”€â”€ Greedy rebalancing loop â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     recommendations = []
     
     for dest in destinations:

@@ -1,14 +1,14 @@
-/* IMSERV — Module 4: Field Operations & Engineer Planning */
+﻿/* SMJ â€” Module 4: Field Operations & Engineer Planning */
 
 let _activeOpsTab = 'capacity';
-const RESOURCE_OPT_STORAGE_KEY = 'imserv-resource-optimisation';
+const RESOURCE_OPT_STORAGE_KEY = 'SMJ-resource-optimisation';
 let _lastOptimisationResult = null;
 let _appliedOptimisation = null;
 const _opsTabLoadKeys = new Map();
 
 function getOpsLoadKey(tabName = _activeOpsTab) {
-  const region = IMSERV.getRegion();
-  const year = IMSERV.getYear();
+  const region = SMJ.getRegion();
+  const year = SMJ.getYear();
   const target = document.getElementById('opt-target')?.value || 72;
   const jobsPerFteDay = document.getElementById('opt-jobs-per-fte')?.value || 4;
   const absenceRate = document.getElementById('opt-absence-rate')?.value || 4;
@@ -22,13 +22,13 @@ function invalidateOpsLoadState() {
 async function loadFieldOpsDashboard(force = false) {
   restoreAppliedOptimisation();
   updateOptimisationButtons();
-  const region = IMSERV.getRegion();
-  const year   = IMSERV.getYear();
+  const region = SMJ.getRegion();
+  const year   = SMJ.getYear();
   const qs     = `?region=${region}&year=${year}`;
-  IMSERV.setLoading(['capacity-forecast-chart', 'resource-gap-chart', 'capacity-matrix-chart', 'patch-plan-body'], true);
+  SMJ.setLoading(['capacity-forecast-chart', 'resource-gap-chart', 'capacity-matrix-chart', 'patch-plan-body'], true);
 
   try {
-    const kpis = await IMSERV.apiFetch('/api/field-ops/kpis' + qs);
+    const kpis = await SMJ.apiFetch('/api/field-ops/kpis' + qs);
     if (kpis) renderFieldOpsKPIs(kpis);
 
     await Promise.all([
@@ -39,17 +39,17 @@ async function loadFieldOpsDashboard(force = false) {
     _opsTabLoadKeys.set('capacity', getOpsLoadKey('capacity'));
     if (_appliedOptimisation) renderOptimisationResult(_appliedOptimisation, true);
   } finally {
-    IMSERV.setLoading(['capacity-forecast-chart', 'resource-gap-chart', 'capacity-matrix-chart', 'patch-plan-body'], false);
+    SMJ.setLoading(['capacity-forecast-chart', 'resource-gap-chart', 'capacity-matrix-chart', 'patch-plan-body'], false);
   }
 }
 
 function renderFieldOpsKPIs(kpis) {
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
-  set('ops-kpi-engineers',   IMSERV.fmt.num(kpis.total_engineers));
-  set('ops-kpi-util',        IMSERV.fmt.pct(kpis.avg_utilisation));
-  set('ops-kpi-jobs',        IMSERV.fmt.num(kpis.total_jobs_completed));
-  set('ops-kpi-productivity',kpis.productivity_jobs_per_day?.toFixed(2) || '—');
-  set('ops-kpi-absence',     IMSERV.fmt.pct(kpis.absence_rate));
+  set('ops-kpi-engineers',   SMJ.fmt.num(kpis.total_engineers));
+  set('ops-kpi-util',        SMJ.fmt.pct(kpis.avg_utilisation));
+  set('ops-kpi-jobs',        SMJ.fmt.num(kpis.total_jobs_completed));
+  set('ops-kpi-productivity',kpis.productivity_jobs_per_day?.toFixed(2) || 'â€”');
+  set('ops-kpi-absence',     SMJ.fmt.pct(kpis.absence_rate));
   applyOptimisationToKPIs();
 
   // Colour utilisation card
@@ -62,7 +62,7 @@ function renderFieldOpsKPIs(kpis) {
 
 function optimisationScaleForCapacityForecast(data) {
   if (!_appliedOptimisation || !data?.regions?.length) return null;
-  const selectedRegion = IMSERV.getRegion();
+  const selectedRegion = SMJ.getRegion();
   const map = getAppliedRegionalMap();
   const getBefore = r => Number(r.capacity_fte_before || r.capacity_before) || 0;
   const getAfter = r => Number(r.capacity_fte_after || r.capacity_after) || 0;
@@ -82,28 +82,28 @@ function optimisationScaleForCapacityForecast(data) {
 function setCapacityGapKPI(gap, clsSource) {
   const gapEl = document.getElementById('ops-kpi-gap');
   const gapCard = document.getElementById('ops-gap-card');
-  if (gapEl) gapEl.textContent = `${gap >= 0 ? '+' : ''}${IMSERV.fmt.num(gap)}`;
+  if (gapEl) gapEl.textContent = `${gap >= 0 ? '+' : ''}${SMJ.fmt.num(gap)}`;
   if (gapCard) {
     gapCard.className = `kpi-card ${clsSource < 0 ? 'crit' : (clsSource < 1000 ? 'warn' : 'ok')}`;
   }
 }
 
 async function loadCapacityForecast() {
-  const region = IMSERV.getRegion();
+  const region = SMJ.getRegion();
   const target = Number(document.getElementById('opt-target')?.value || 72);
   const jobsPerFteDay = Number(document.getElementById('opt-jobs-per-fte')?.value || 4);
   const absenceRate = Number(document.getElementById('opt-absence-rate')?.value || 4);
   const qs = new URLSearchParams({ target, jobs_per_fte_day: jobsPerFteDay, absence_rate: absenceRate });
   if (region) qs.set('region', region);
-  IMSERV.setLoading(['capacity-forecast-chart', 'resource-gap-chart'], true);
+  SMJ.setLoading(['capacity-forecast-chart', 'resource-gap-chart'], true);
 
-  const data = await IMSERV.apiFetch('/api/field-ops/capacity-forecast?' + qs.toString(), { force: true });
+  const data = await SMJ.apiFetch('/api/field-ops/capacity-forecast?' + qs.toString(), { force: true });
   if (!data) {
-    IMSERV.setLoading(['capacity-forecast-chart', 'resource-gap-chart'], false);
+    SMJ.setLoading(['capacity-forecast-chart', 'resource-gap-chart'], false);
     return;
   }
   renderCapacityForecast(data);
-  IMSERV.setLoading(['capacity-forecast-chart', 'resource-gap-chart'], false);
+  SMJ.setLoading(['capacity-forecast-chart', 'resource-gap-chart'], false);
 }
 
 function renderCapacityForecast(data) {
@@ -116,12 +116,12 @@ function renderCapacityForecast(data) {
 
   if (data.kpis && data.method) {
     const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
-    set('ops-kpi-jobs', IMSERV.fmt.num(data.kpis.forecast_capacity_jobs));
-    set('ops-kpi-productivity', data.method.jobs_per_fte_day?.toFixed(2) || '—');
+    set('ops-kpi-jobs', SMJ.fmt.num(data.kpis.forecast_capacity_jobs));
+    set('ops-kpi-productivity', data.method.jobs_per_fte_day?.toFixed(2) || 'â€”');
     const absenceRate = data.kpis.avg_required_fte 
       ? (data.kpis.avg_absent_fte / data.kpis.avg_required_fte) * 100 
       : 0;
-    set('ops-kpi-absence', IMSERV.fmt.pct(absenceRate));
+    set('ops-kpi-absence', SMJ.fmt.pct(absenceRate));
     
     const jobsLabel = document.querySelector('#ops-kpi-jobs')?.previousElementSibling;
     if (jobsLabel) jobsLabel.textContent = 'Forecast Appointment Capacity';
@@ -132,7 +132,7 @@ function renderCapacityForecast(data) {
   if (summary) {
     summary.innerHTML = `
       <strong>${method.name || 'Appointment-led FTE forecast'}: ${method.planning_base_fte || 203} planning FTE, ${method.jobs_per_fte_day || 4} appointments/FTE/day</strong>
-      <span>Avg required FTE/day ${IMSERV.fmt.num(data.kpis?.avg_required_fte)}, avg absent FTE/day ${IMSERV.fmt.num(data.kpis?.avg_absent_fte)}, avg bank-holiday FTE/day ${IMSERV.fmt.num(data.kpis?.avg_bank_holiday_fte)}, net forecast FTE/day ${IMSERV.fmt.num(data.kpis?.avg_net_forecast_fte)}.</span>
+      <span>Avg required FTE/day ${SMJ.fmt.num(data.kpis?.avg_required_fte)}, avg absent FTE/day ${SMJ.fmt.num(data.kpis?.avg_absent_fte)}, avg bank-holiday FTE/day ${SMJ.fmt.num(data.kpis?.avg_bank_holiday_fte)}, net forecast FTE/day ${SMJ.fmt.num(data.kpis?.avg_net_forecast_fte)}.</span>
     `;
   }
 
@@ -140,32 +140,32 @@ function renderCapacityForecast(data) {
   if (forecastCtx && weekly.length) {
     const datasets = [
       { label: 'Appointments Booked 2026', type: 'bar', data: weekly.map(w => w.required_fte), borderColor: 'rgba(251,130,129,0.78)', backgroundColor: 'rgba(251,130,129,0.22)', borderWidth: 1, borderRadius: 3, barPercentage: 0.86, categoryPercentage: 0.82 },
-      { label: '2025 Capacity FTE', data: weekly.map(w => w.capacity_2025_fte), borderColor: IMSERV.colors.muted, backgroundColor: 'rgba(74,107,124,0.08)', borderDash: [3, 3], fill: false, tension: 0.25, pointRadius: 0 },
-      { label: 'Capacity 2026', data: weekly.map(w => w.net_forecast_fte), borderColor: IMSERV.colors.ok, backgroundColor: 'rgba(2,129,120,0.08)', borderDash: [6, 4], fill: false, tension: 0.28, pointRadius: 0 },
+      { label: '2025 Capacity FTE', data: weekly.map(w => w.capacity_2025_fte), borderColor: SMJ.colors.muted, backgroundColor: 'rgba(74,107,124,0.08)', borderDash: [3, 3], fill: false, tension: 0.25, pointRadius: 0 },
+      { label: 'Capacity 2026', data: weekly.map(w => w.net_forecast_fte), borderColor: SMJ.colors.ok, backgroundColor: 'rgba(2,129,120,0.08)', borderDash: [6, 4], fill: false, tension: 0.28, pointRadius: 0 },
     ];
     if (scale) {
       datasets.push({
         label: 'Implemented Optimised FTE',
         data: weekly.map(w => Number((w.current_capacity_fte * scale).toFixed(1))),
-        borderColor: IMSERV.colors.orange,
+        borderColor: SMJ.colors.orange,
         backgroundColor: 'rgba(244,210,90,0.08)',
         fill: false,
         tension: 0.28,
         pointRadius: 0,
       });
     }
-    IMSERV.destroyChart('capacity-forecast');
-    IMSERV.registerChart('capacity-forecast', new Chart(forecastCtx, {
+    SMJ.destroyChart('capacity-forecast');
+    SMJ.registerChart('capacity-forecast', new Chart(forecastCtx, {
       type: 'line',
       data: { labels: weekly.map(w => 'W' + w.week_number), datasets },
       options: {
         responsive: true,
         maintainAspectRatio: false,
         interaction: { mode: 'index', intersect: false },
-        plugins: IMSERV.chartDefaults.plugins,
+        plugins: SMJ.chartDefaults.plugins,
         scales: {
-          ...IMSERV.chartDefaults.scales,
-          y: { ...IMSERV.chartDefaults.scales.y, title: { display: true, text: 'FTE / day', color: '#737373' } },
+          ...SMJ.chartDefaults.scales,
+          y: { ...SMJ.chartDefaults.scales.y, title: { display: true, text: 'FTE / day', color: '#737373' } },
         },
       },
     }));
@@ -178,8 +178,8 @@ function renderCapacityForecast(data) {
       const after = map[r.region_code];
       return after ? Number(((after.engineers_after || 0) - r.required_fte).toFixed(1)) : r.fte_gap;
     });
-    IMSERV.destroyChart('resource-gap');
-    IMSERV.registerChart('resource-gap', new Chart(gapCtx, {
+    SMJ.destroyChart('resource-gap');
+    SMJ.registerChart('resource-gap', new Chart(gapCtx, {
       type: 'bar',
       data: {
         labels: regions.map(r => r.region_code),
@@ -187,15 +187,15 @@ function renderCapacityForecast(data) {
           label: 'Net FTE - Required FTE',
           data: gaps,
           backgroundColor: gaps.map(g => g < 0 ? 'rgba(251,130,129,0.68)' : 'rgba(2,129,120,0.62)'),
-          borderColor: gaps.map(g => g < 0 ? IMSERV.colors.crit : IMSERV.colors.ok),
+          borderColor: gaps.map(g => g < 0 ? SMJ.colors.crit : SMJ.colors.ok),
           borderWidth: 1,
         }],
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        plugins: IMSERV.chartDefaults.plugins,
-        scales: IMSERV.chartDefaults.scales,
+        plugins: SMJ.chartDefaults.plugins,
+        scales: SMJ.chartDefaults.scales,
       },
     }));
   }
@@ -208,19 +208,19 @@ function renderCapacityForecast(data) {
       return `
         <tr>
           <td><strong>${r.region_code}</strong></td>
-          <td>${IMSERV.fmt.num(r.required_fte)}</td>
-          <td>${IMSERV.fmt.num(r.absent_fte)}</td>
-          <td>${IMSERV.fmt.num(r.net_forecast_fte)}</td>
-          <td>${IMSERV.fmt.pct(after ? (after.utilisation_after != null ? after.utilisation_after : (after.capacity_fte_after ? (after.required_fte / after.capacity_fte_after) * 100 : r.utilisation_pct)) : r.utilisation_pct)}</td>
-          <td class="${(afterGap ?? r.fte_gap) < 0 ? 'text-crit' : 'text-ok'}">${(afterGap ?? r.fte_gap) >= 0 ? '+' : ''}${IMSERV.fmt.num(afterGap ?? r.fte_gap)}</td>
+          <td>${SMJ.fmt.num(r.required_fte)}</td>
+          <td>${SMJ.fmt.num(r.absent_fte)}</td>
+          <td>${SMJ.fmt.num(r.net_forecast_fte)}</td>
+          <td>${SMJ.fmt.pct(after ? (after.utilisation_after != null ? after.utilisation_after : (after.capacity_fte_after ? (after.required_fte / after.capacity_fte_after) * 100 : r.utilisation_pct)) : r.utilisation_pct)}</td>
+          <td class="${(afterGap ?? r.fte_gap) < 0 ? 'text-crit' : 'text-ok'}">${(afterGap ?? r.fte_gap) >= 0 ? '+' : ''}${SMJ.fmt.num(afterGap ?? r.fte_gap)}</td>
         </tr>
       `;
     }).join('');
     body.innerHTML = `
       <div class="d-flex gap-8 mb-12 flex-wrap">
-        <span class="stat-chip">Jobs/FTE/day: <strong>${IMSERV.fmt.num(data.method?.jobs_per_fte_day)}</strong></span>
-        <span class="stat-chip">2025 capacity FTE/day: <strong>${IMSERV.fmt.num(data.kpis?.avg_2025_capacity_fte)}</strong></span>
-        <span class="stat-chip">Planned capacity FTE/day: <strong>${IMSERV.fmt.num(data.kpis?.avg_current_capacity_fte)}</strong></span>
+        <span class="stat-chip">Jobs/FTE/day: <strong>${SMJ.fmt.num(data.method?.jobs_per_fte_day)}</strong></span>
+        <span class="stat-chip">2025 capacity FTE/day: <strong>${SMJ.fmt.num(data.kpis?.avg_2025_capacity_fte)}</strong></span>
+        <span class="stat-chip">Planned capacity FTE/day: <strong>${SMJ.fmt.num(data.kpis?.avg_current_capacity_fte)}</strong></span>
       </div>
       <table class="data-table resource-mini-table">
         <thead><tr><th>Region</th><th>Req FTE/day</th><th>Absent FTE/day</th><th>Net FTE/day</th><th>Utilisation</th><th>FTE Gap</th></tr></thead>
@@ -231,17 +231,17 @@ function renderCapacityForecast(data) {
 }
 
 async function loadCapacityMatrix() {
-  const year = IMSERV.getYear();
-  IMSERV.setLoading('capacity-matrix-chart', true);
-  const data = await IMSERV.apiFetch('/api/field-ops/capacity-matrix?year=' + year);
+  const year = SMJ.getYear();
+  SMJ.setLoading('capacity-matrix-chart', true);
+  const data = await SMJ.apiFetch('/api/field-ops/capacity-matrix?year=' + year);
   if (!data) {
-    IMSERV.setLoading('capacity-matrix-chart', false);
+    SMJ.setLoading('capacity-matrix-chart', false);
     return;
   }
 
   const ctx = document.getElementById('capacity-matrix-chart');
   if (!ctx) {
-    IMSERV.setLoading('capacity-matrix-chart', false);
+    SMJ.setLoading('capacity-matrix-chart', false);
     return;
   }
 
@@ -283,49 +283,49 @@ async function loadCapacityMatrix() {
     return parseFloat((demVals[i] / Math.max(capVals[i], 1) * 100).toFixed(1));
   });
 
-  IMSERV.destroyChart('capacity-matrix');
-  IMSERV.registerChart('capacity-matrix', new Chart(ctx, {
+  SMJ.destroyChart('capacity-matrix');
+  SMJ.registerChart('capacity-matrix', new Chart(ctx, {
     type: 'bar',
     data: {
       labels: regions,
       datasets: [
         { label: 'Avg Weekly Engineer Capacity', data: capVals, backgroundColor: 'rgba(2,129,120,0.55)',   yAxisID: 'y'  },
         { label: 'Avg Weekly Appointments Booked', data: demVals, backgroundColor: 'rgba(2,194,183,0.55)', yAxisID: 'y' },
-        { label: 'Utilisation %',       data: utilVals,borderColor: IMSERV.colors.warn, type: 'line', fill: false, tension: 0.3, pointRadius: 4, yAxisID: 'y1' },
+        { label: 'Utilisation %',       data: utilVals,borderColor: SMJ.colors.warn, type: 'line', fill: false, tension: 0.3, pointRadius: 4, yAxisID: 'y1' },
       ],
     },
     options: {
       responsive: true, maintainAspectRatio: false,
       interaction: { mode: 'index', intersect: false },
-      plugins: IMSERV.chartDefaults.plugins,
+      plugins: SMJ.chartDefaults.plugins,
       scales: {
-        ...IMSERV.chartDefaults.scales,
-        y:  { ...IMSERV.chartDefaults.scales.y, position: 'left',  title: { display: true, text: 'Smart meter jobs / week', color: '#737373' } },
-        y1: { ...IMSERV.chartDefaults.scales.y, position: 'right', grid: { display: false },
-               ticks: { ...IMSERV.chartDefaults.scales.y.ticks, callback: v => v + '%' },
+        ...SMJ.chartDefaults.scales,
+        y:  { ...SMJ.chartDefaults.scales.y, position: 'left',  title: { display: true, text: 'Smart meter jobs / week', color: '#737373' } },
+        y1: { ...SMJ.chartDefaults.scales.y, position: 'right', grid: { display: false },
+               ticks: { ...SMJ.chartDefaults.scales.y.ticks, callback: v => v + '%' },
                min: 0, max: 120 },
       },
     },
   }));
-  IMSERV.setLoading('capacity-matrix-chart', false);
+  SMJ.setLoading('capacity-matrix-chart', false);
 }
 
 async function loadPatchPlan() {
-  const region = IMSERV.getRegion() || document.getElementById('patch-region-filter')?.value || 'NW';
+  const region = SMJ.getRegion() || document.getElementById('patch-region-filter')?.value || 'NW';
   const selector = document.getElementById('patch-region-filter');
   if (selector && selector.value !== region) selector.value = region;
-  const year   = IMSERV.getYear();
-  IMSERV.setLoading('patch-plan-body', true);
-  const data   = await IMSERV.apiFetch(`/api/field-ops/patch-plan?region=${region}&year=${year}`);
+  const year   = SMJ.getYear();
+  SMJ.setLoading('patch-plan-body', true);
+  const data   = await SMJ.apiFetch(`/api/field-ops/patch-plan?region=${region}&year=${year}`);
   const body   = document.getElementById('patch-plan-body');
   if (!body || !data) {
-    IMSERV.setLoading('patch-plan-body', false);
+    SMJ.setLoading('patch-plan-body', false);
     return;
   }
 
   if (!data.length) {
-    body.innerHTML = '<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-title">No patch data available</div></div>';
-    IMSERV.setLoading('patch-plan-body', false);
+    body.innerHTML = '<div class="empty-state"><div class="empty-icon">ðŸ“Š</div><div class="empty-title">No patch data available</div></div>';
+    SMJ.setLoading('patch-plan-body', false);
     return;
   }
 
@@ -343,18 +343,18 @@ async function loadPatchPlan() {
         </div>
         <div class="utilisation-pct ${p.utilisation_pct > 90 ? 'text-crit' : (p.utilisation_pct > 75 ? 'text-warn' : 'text-ok')}">${p.utilisation_pct}%</div>
         <span class="rag ${p.rag}" style="flex-shrink:0">${p.rag}</span>
-        <div class="stat-chip" style="flex-shrink:0">Appointments booked: ${IMSERV.fmt.num(p.demand_jobs)}</div>
-        <div class="stat-chip" style="flex-shrink:0">Engineer capacity: ${IMSERV.fmt.num(p.capacity_jobs)}</div>
+        <div class="stat-chip" style="flex-shrink:0">Appointments booked: ${SMJ.fmt.num(p.demand_jobs)}</div>
+        <div class="stat-chip" style="flex-shrink:0">Engineer capacity: ${SMJ.fmt.num(p.capacity_jobs)}</div>
       </div>
     `;
   }).join('');
-  IMSERV.setLoading('patch-plan-body', false);
+  SMJ.setLoading('patch-plan-body', false);
 }
 
 async function loadEngineerPerformance() {
-  const region = IMSERV.getRegion();
-  const year   = IMSERV.getYear();
-  const data   = await IMSERV.apiFetch(`/api/field-ops/engineer-performance?region=${region}&year=${year}&top_n=20`);
+  const region = SMJ.getRegion();
+  const year   = SMJ.getYear();
+  const data   = await SMJ.apiFetch(`/api/field-ops/engineer-performance?region=${region}&year=${year}&top_n=20`);
   const tbody  = document.getElementById('engineer-perf-body');
   if (!tbody || !data) return;
 
@@ -365,14 +365,14 @@ async function loadEngineerPerformance() {
       <td>${e.patch_code}</td>
       <td><span class="stat-chip">${e.employment_type}</span></td>
       <td>${e.working_days}</td>
-      <td>${IMSERV.fmt.num(e.jobs_completed)}</td>
+      <td>${SMJ.fmt.num(e.jobs_completed)}</td>
       <td>${e.avg_daily_jobs}</td>
       <td>
         <div style="display:flex;align-items:center;gap:6px">
           <div class="utilisation-bar-wrap" style="width:80px">
             <div class="utilisation-bar ${e.achievement_pct > 90 ? 'green' : (e.achievement_pct > 70 ? 'amber' : 'red')}" style="width:${Math.min(100,e.achievement_pct)}%"></div>
           </div>
-          <span class="${e.achievement_pct > 90 ? 'text-ok' : (e.achievement_pct > 70 ? 'text-warn' : 'text-crit')}">${IMSERV.fmt.pct(e.achievement_pct)}</span>
+          <span class="${e.achievement_pct > 90 ? 'text-ok' : (e.achievement_pct > 70 ? 'text-warn' : 'text-crit')}">${SMJ.fmt.pct(e.achievement_pct)}</span>
         </div>
       </td>
     </tr>
@@ -399,7 +399,7 @@ function getOptimiseParams() {
     target:          val('opt-target', 72),
     jobs_per_fte_day: val('opt-jobs-per-fte', 4),
     absence_rate:    val('opt-absence-rate', 4),
-    // Fixed internal defaults — not exposed to user
+    // Fixed internal defaults â€” not exposed to user
     tolerance:  3,
     max_move:   25,
     min_move:   1,
@@ -409,7 +409,7 @@ function getOptimiseParams() {
 
 function optimisationQuery(params) {
   const qs = new URLSearchParams({
-    year:             IMSERV.getYear(),
+    year:             SMJ.getYear(),
     target:           params.target,
     tolerance:        params.tolerance,
     max_move:         params.max_move,
@@ -425,7 +425,7 @@ function restoreAppliedOptimisation() {
   try {
     const raw = localStorage.getItem(RESOURCE_OPT_STORAGE_KEY);
     const parsed = raw ? JSON.parse(raw) : null;
-    _appliedOptimisation = parsed?.year === IMSERV.getYear() ? parsed.result : null;
+    _appliedOptimisation = parsed?.year === SMJ.getYear() ? parsed.result : null;
   } catch (e) {
     _appliedOptimisation = null;
   }
@@ -434,7 +434,7 @@ function restoreAppliedOptimisation() {
 function persistAppliedOptimisation(result) {
   _appliedOptimisation = result;
   localStorage.setItem(RESOURCE_OPT_STORAGE_KEY, JSON.stringify({
-    year: IMSERV.getYear(),
+    year: SMJ.getYear(),
     result,
   }));
 }
@@ -457,7 +457,7 @@ function applyOptimisationToKPIs() {
   const utilEl = document.getElementById('ops-kpi-util');
   const engineerEl = document.getElementById('ops-kpi-engineers');
   if (!utilEl) return;
-  const region = IMSERV.getRegion();
+  const region = SMJ.getRegion();
   const regionalMap = getAppliedRegionalMap();
   const regionAfter = region ? regionalMap[region] : null;
   
@@ -474,9 +474,9 @@ function applyOptimisationToKPIs() {
     utilAfter = totalCap > 0 ? (totalReq / totalCap) * 100 : null;
   }
   
-  if (utilAfter != null) utilEl.textContent = IMSERV.fmt.pct(utilAfter);
+  if (utilAfter != null) utilEl.textContent = SMJ.fmt.pct(utilAfter);
   if (engineerEl && regionAfter?.engineers_after != null) {
-    engineerEl.textContent = IMSERV.fmt.num(regionAfter.engineers_after);
+    engineerEl.textContent = SMJ.fmt.num(regionAfter.engineers_after);
   }
 }
 
@@ -537,8 +537,8 @@ function renderOptimisationResult(data, applied = false) {
         </div>
         <div class="rec-footer mt-8 fs-11">
           <div class="d-flex gap-16">
-            <span><strong>${r.from_region} Gap:</strong> ${IMSERV.fmt.num(r.from_gap_before)} &rarr; ${IMSERV.fmt.num(r.from_gap_after)}</span>
-            <span><strong>${r.to_region} Gap:</strong> ${IMSERV.fmt.num(r.to_gap_before)} &rarr; ${IMSERV.fmt.num(r.to_gap_after)}</span>
+            <span><strong>${r.from_region} Gap:</strong> ${SMJ.fmt.num(r.from_gap_before)} &rarr; ${SMJ.fmt.num(r.from_gap_after)}</span>
+            <span><strong>${r.to_region} Gap:</strong> ${SMJ.fmt.num(r.to_gap_before)} &rarr; ${SMJ.fmt.num(r.to_gap_after)}</span>
           </div>
         </div>
       </div>
@@ -578,14 +578,14 @@ function renderOptimisationResult(data, applied = false) {
     return `
       <tr>
         <td><strong>${r.region_code}</strong></td>
-        <td>${IMSERV.fmt.num(r.engineers_before)}</td>
-        <td>${IMSERV.fmt.num(r.engineers_after)}</td>
+        <td>${SMJ.fmt.num(r.engineers_before)}</td>
+        <td>${SMJ.fmt.num(r.engineers_after)}</td>
         <td class="${deltaCls}">${delta > 0 ? '+' : ''}${delta}</td>
-        <td class="text-muted">${r.required_fte != null ? IMSERV.fmt.num(r.required_fte) : '—'}</td>
-        <td class="text-muted">${r.capacity_fte_before != null ? IMSERV.fmt.num(r.capacity_fte_before) : '—'}</td>
-        <td class="text-muted">${r.capacity_fte_after != null ? IMSERV.fmt.num(r.capacity_fte_after) : '—'}</td>
-        <td class="${r.fte_gap_before < 0 ? 'text-crit' : 'text-ok'}">${r.fte_gap_before >= 0 ? '+' : ''}${IMSERV.fmt.num(r.fte_gap_before)}</td>
-        <td class="${r.fte_gap_after  < 0 ? 'text-crit' : 'text-ok'}">${r.fte_gap_after  >= 0 ? '+' : ''}${IMSERV.fmt.num(r.fte_gap_after)}</td>
+        <td class="text-muted">${r.required_fte != null ? SMJ.fmt.num(r.required_fte) : 'â€”'}</td>
+        <td class="text-muted">${r.capacity_fte_before != null ? SMJ.fmt.num(r.capacity_fte_before) : 'â€”'}</td>
+        <td class="text-muted">${r.capacity_fte_after != null ? SMJ.fmt.num(r.capacity_fte_after) : 'â€”'}</td>
+        <td class="${r.fte_gap_before < 0 ? 'text-crit' : 'text-ok'}">${r.fte_gap_before >= 0 ? '+' : ''}${SMJ.fmt.num(r.fte_gap_before)}</td>
+        <td class="${r.fte_gap_after  < 0 ? 'text-crit' : 'text-ok'}">${r.fte_gap_after  >= 0 ? '+' : ''}${SMJ.fmt.num(r.fte_gap_after)}</td>
       </tr>
     `;
   }).join('');
@@ -595,11 +595,11 @@ function renderOptimisationResult(data, applied = false) {
     <div class="grid-3 mb-12">
       <div class="kpi-card ok">
         <div class="kpi-label">Total Gap Before</div>
-        <div class="kpi-value">${IMSERV.fmt.num(data.total_gap_before || 0)} <span class="fs-12 fw-400 text-muted">FTE</span></div>
+        <div class="kpi-value">${SMJ.fmt.num(data.total_gap_before || 0)} <span class="fs-12 fw-400 text-muted">FTE</span></div>
       </div>
       <div class="kpi-card ok">
         <div class="kpi-label">Total Gap After</div>
-        <div class="kpi-value">${IMSERV.fmt.num(data.total_gap_after || 0)} <span class="fs-12 fw-400 text-muted">FTE</span></div>
+        <div class="kpi-value">${SMJ.fmt.num(data.total_gap_after || 0)} <span class="fs-12 fw-400 text-muted">FTE</span></div>
       </div>
       <div class="kpi-card info">
         <div class="kpi-label">Engineers Moved / Added</div>
@@ -607,15 +607,15 @@ function renderOptimisationResult(data, applied = false) {
       </div>
     </div>
     <div class="d-flex gap-8 mb-12 flex-wrap">
-      <span class="stat-chip">Target: <strong>${IMSERV.fmt.pct(data.parameters?.target_utilisation_pct)}</strong></span>
-      <span class="stat-chip">Jobs/FTE/day: <strong>${data.parameters?.jobs_per_fte_day ?? '—'}</strong></span>
-      <span class="stat-chip">Absence: <strong>${IMSERV.fmt.pct(data.parameters?.absence_rate_pct)}</strong></span>
+      <span class="stat-chip">Target: <strong>${SMJ.fmt.pct(data.parameters?.target_utilisation_pct)}</strong></span>
+      <span class="stat-chip">Jobs/FTE/day: <strong>${data.parameters?.jobs_per_fte_day ?? 'â€”'}</strong></span>
+      <span class="stat-chip">Absence: <strong>${SMJ.fmt.pct(data.parameters?.absence_rate_pct)}</strong></span>
     </div>
     <div class="grid-5-7 optimise-result-grid">
       <div>
         <div class="fs-12 fw-600 mb-8 text-muted">REGION IMPACT</div>
         <table class="data-table optimise-impact-table">
-          <thead><tr><th>Region</th><th>Eng. Before</th><th>Eng. After</th><th>Δ</th><th>Req FTE</th><th>Cap FTE Before</th><th>Cap FTE After</th><th>Gap Before</th><th>Gap After</th></tr></thead>
+          <thead><tr><th>Region</th><th>Eng. Before</th><th>Eng. After</th><th>Î”</th><th>Req FTE</th><th>Cap FTE Before</th><th>Cap FTE After</th><th>Gap Before</th><th>Gap After</th></tr></thead>
           <tbody>${rows}</tbody>
         </table>
       </div>
@@ -625,7 +625,7 @@ function renderOptimisationResult(data, applied = false) {
       </div>
     </div>
   `;
-  IMSERV.hydrateIcons(body);
+  SMJ.hydrateIcons(body);
 }
 
 async function loadOptimisation() {
@@ -640,12 +640,12 @@ async function loadOptimisation() {
       </div>
     `;
   }
-  const data = await IMSERV.apiFetch('/api/field-ops/optimise?' + optimisationQuery(params), { force: true });
+  const data = await SMJ.apiFetch('/api/field-ops/optimise?' + optimisationQuery(params), { force: true });
   if (!data) {
     if (body) {
       body.innerHTML = `
         <div class="empty-state">
-          <div class="empty-icon text-crit">⚠️</div>
+          <div class="empty-icon text-crit">âš ï¸</div>
           <div class="empty-title">Optimisation Failed</div>
           <div class="empty-desc">An error occurred while generating recommendations. Please try again.</div>
         </div>
@@ -682,7 +682,7 @@ function revertOptimisation() {
         <div class="empty-desc">Original allocation restored. Run optimisation to generate a new plan.</div>
       </div>
     `;
-    IMSERV.hydrateIcons(body);
+    SMJ.hydrateIcons(body);
   }
   updateOptimisationButtons();
   loadFieldOpsDashboard();

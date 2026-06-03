@@ -1,11 +1,11 @@
-/* IMSERV — Client-side configuration and shared utilities */
-const IMSERV = {
+﻿/* SMJ â€” Client-side configuration and shared utilities */
+const SMJ = {
   version: '1.0.0',
   charts: {},   // registered Chart.js instances
   apiCache: new Map(),
   apiCacheTtlMs: 60_000,
 
-  // Brand colours — mirror CSS variables for Chart.js
+  // Brand colours â€” mirror CSS variables for Chart.js
   colors: {
     primary:   '#028178',
     accent:    '#02C2B7',
@@ -118,11 +118,11 @@ const IMSERV = {
 
   // Format helpers
   fmt: {
-    num:  (v) => v == null ? '—' : Number(v).toLocaleString('en-GB'),
-    pct:  (v) => v == null ? '—' : Number(v).toFixed(1) + '%',
-    gbp:  (v) => v == null ? '—' : '£' + Number(v).toLocaleString('en-GB', { maximumFractionDigits: 0 }),
-    gbpK: (v) => v == null ? '—' : '£' + (Number(v) / 1000).toFixed(0) + 'k',
-    gbpM: (v) => v == null ? '—' : '£' + (Number(v) / 1_000_000).toFixed(2) + 'M',
+    num:  (v) => v == null ? 'â€”' : Number(v).toLocaleString('en-GB'),
+    pct:  (v) => v == null ? 'â€”' : Number(v).toFixed(1) + '%',
+    gbp:  (v) => v == null ? 'â€”' : 'Â£' + Number(v).toLocaleString('en-GB', { maximumFractionDigits: 0 }),
+    gbpK: (v) => v == null ? 'â€”' : 'Â£' + (Number(v) / 1000).toFixed(0) + 'k',
+    gbpM: (v) => v == null ? 'â€”' : 'Â£' + (Number(v) / 1_000_000).toFixed(2) + 'M',
   },
 
   getRegion: () => document.getElementById('global-region')?.value || '',
@@ -198,17 +198,17 @@ const IMSERV = {
   priorityIcon: () => '',
 };
 
-window.IMSERV = IMSERV;
-IMSERV.applyChartTheme();
+window.SMJ = SMJ;
+SMJ.applyChartTheme();
 
 // Apply initial theme icon
 (function () {
-  const t = localStorage.getItem('imserv-theme') || 'light';
+  const t = localStorage.getItem('SMJ-theme') || 'dark';
   const icon = document.getElementById('theme-icon');
   if (icon) icon.textContent = t === 'dark' ? 'Dark' : 'Light';
 })();
 
-Object.assign(IMSERV, {
+Object.assign(SMJ, {
   iconSvg(name) {
     const icons = {
       activity: '<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>',
@@ -299,7 +299,7 @@ Object.assign(IMSERV, {
     root.querySelectorAll('.nav-icon:not([data-icon-ready])').forEach(el => {
       const view = el.closest('.nav-item')?.dataset.view;
       const icon = el.id === 'theme-icon'
-        ? ((document.documentElement.dataset.theme || 'light') === 'dark' ? 'moon' : 'sun')
+        ? ((document.documentElement.dataset.theme || 'dark') === 'dark' ? 'moon' : 'sun')
         : ({ journey: 'barChart', forecasting: 'trendingUp', cancellations: 'xCircle', 'field-ops': 'wrench', financial: 'wallet' }[view] || 'settings');
       this.setElementIcon(el, icon);
     });
@@ -335,12 +335,12 @@ Object.assign(IMSERV, {
   },
 });
 
-window.IMSERV = IMSERV;
+window.SMJ = SMJ;
 
 document.addEventListener('DOMContentLoaded', () => {
-  IMSERV.hydrateIcons();
+  SMJ.hydrateIcons();
   const observer = new MutationObserver(() => {
-    window.requestAnimationFrame(() => IMSERV.hydrateIcons());
+    window.requestAnimationFrame(() => SMJ.hydrateIcons());
   });
   observer.observe(document.body, { childList: true, subtree: true });
 });

@@ -1,7 +1,7 @@
-"""
-IMSERV Platform — Financial Scenario Planning Engine
+﻿"""
+Smart Meter Journey â€” Financial Scenario Planning Engine
 Interactive simulation: job volume, meter type, region, engineer allocation,
-productivity assumptions → operational cost, revenue, margin, cost-per-job.
+productivity assumptions â†’ operational cost, revenue, margin, cost-per-job.
 Mirrors DAA's Monte Carlo simulation architecture.
 """
 import math
@@ -13,7 +13,7 @@ from engine.ingestion import (
     get_financial_data, to_int, to_float, safe_pct
 )
 
-# ─────────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 REVENUE_MAP  = {"NEW_INSTALL": 185.0, "EXCHANGE": 165.0, "REPAIR": 120.0, "REMOVAL": 90.0}
 COST_MAP     = {"NEW_INSTALL":  95.0, "EXCHANGE":  82.0, "REPAIR":  65.0, "REMOVAL": 48.0}
@@ -22,7 +22,7 @@ OVERHEAD_PCT = 0.22   # 22% overhead on direct cost
 
 JOB_TYPE_WEIGHTS = {"NEW_INSTALL": 0.35, "EXCHANGE": 0.40, "REPAIR": 0.18, "REMOVAL": 0.07}
 
-# ─── Core Calculations ────────────────────────────────────────────────────────
+# â”€â”€â”€ Core Calculations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def _calculate_financials(
     job_volume: int,
@@ -166,7 +166,7 @@ def _apply_2026_forecast_financials(rows: list, region_code: str = None) -> list
     return result
 
 
-# ─── Public API ───────────────────────────────────────────────────────────────
+# â”€â”€â”€ Public API â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def get_financial_kpis(region_code: str = None, year: int = 2025) -> dict:
     """
@@ -356,7 +356,7 @@ def compare_scenarios(scenarios: list) -> dict:
         "margin_range":        [worst["margin_pct"], best["margin_pct"]],
         "recommendation": (
             f"Scenario '{best['scenario_name']}' delivers highest margin at "
-            f"{best['margin_pct']}% (£{best['margin_gbp']:,.0f}). "
+            f"{best['margin_pct']}% (Â£{best['margin_gbp']:,.0f}). "
             f"Consider applying its parameters regionally."
         ),
     }

@@ -1,4 +1,4 @@
-version: "3.9"
+﻿version: "3.9"
 
 services:
   web:
@@ -7,7 +7,7 @@ services:
       - "5000:5000"
     environment:
       - FLASK_ENV=development
-      - DATABASE_URL=postgresql://imserv:imserv@db:5432/imserv
+      - DATABASE_URL=postgresql://SMJ:SMJ@db:5432/SMJ
       - ENABLE_DATABASE=true
     volumes:
       - ./data:/app/data
@@ -19,16 +19,16 @@ services:
   db:
     image: postgres:16-alpine
     environment:
-      POSTGRES_USER: imserv
-      POSTGRES_PASSWORD: imserv
-      POSTGRES_DB: imserv
+      POSTGRES_USER: SMJ
+      POSTGRES_PASSWORD: SMJ
+      POSTGRES_DB: SMJ
     ports:
       - "5432:5432"
     volumes:
       - pg_data:/var/lib/postgresql/data
       - ./deployment/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U imserv"]
+      test: ["CMD-SHELL", "pg_isready -U SMJ"]
       interval: 5s
       timeout: 5s
       retries: 5
