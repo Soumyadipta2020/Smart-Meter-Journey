@@ -1,4 +1,4 @@
-﻿/* SMJ â€” Module 1: Appointment Journey Dashboard */
+/* SMJ  Module 1: Appointment Journey Dashboard */
 
 let _journeyTrendChart = null;
 
@@ -137,7 +137,7 @@ function renderJourneyKPIs(kpis) {
   set('kpi-customers',        SMJ.fmt.num(uniqueCustomers));
   set('kpi-appointments-booked', SMJ.fmt.num(kpis.total_bookings));
   set('kpi-contacts',         SMJ.fmt.num(kpis.total_contacts));
-  set('kpi-avg-contacts',     kpis.avg_contacts_per_customer?.toFixed(2) || 'â€”');
+  set('kpi-avg-contacts',     kpis.avg_contacts_per_customer?.toFixed(2) || '');
   set('kpi-bookings',         SMJ.fmt.num(kpis.total_visits ?? Math.max((kpis.total_bookings || 0) - (kpis.total_cancellations || 0), 0)));
   set('kpi-cancellations',    SMJ.fmt.num(kpis.total_cancellations));
   set('kpi-aborts',           SMJ.fmt.num(kpis.total_aborts));
@@ -194,7 +194,7 @@ function renderFunnel(kpis) {
   }).join('') + `
     <div class="d-flex gap-8 mt-12 flex-wrap justify-content-center">
       <span class="stat-chip">Success Rate: <strong>${SMJ.fmt.pct(kpis.completion_rate)}</strong></span>
-      <span class="stat-chip">Average Contacts Per Customer: <strong>${kpis.avg_contacts_per_customer?.toFixed(2) || 'â€”'}</strong></span>
+      <span class="stat-chip">Average Contacts Per Customer: <strong>${kpis.avg_contacts_per_customer?.toFixed(2) || ''}</strong></span>
     </div>
   `;
 }
@@ -428,7 +428,7 @@ function renderRegionalHeatmapLegacy(data) {
     return;
   }
   if (!data || !data.length) {
-    container.innerHTML = '<div class="empty-state" style="grid-column: 1 / -1;"><div class="empty-icon">ðŸ“Š</div><div class="empty-title">No data available</div></div>';
+    container.innerHTML = '<div class="empty-state" style="grid-column: 1 / -1;"><div class="empty-icon"></div><div class="empty-title">No data available</div></div>';
     return;
   }
 

@@ -1,4 +1,4 @@
-﻿/* Smart Meter Journey - Main Application Controller */
+/* Smart Meter Journey - Main Application Controller */
 
 const VIEW_CONFIG = {
   journey: { title: 'Smart Meter Appointment Journey Overview', breadcrumb: 'Smart Meter Journey / Appointments / Appointment Journey', loader: loadJourneyDashboard },

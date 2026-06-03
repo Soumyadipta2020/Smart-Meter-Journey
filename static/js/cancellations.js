@@ -1,4 +1,4 @@
-﻿/* SMJ - Module 3: Appointment Fallout */
+/* SMJ - Module 3: Appointment Fallout */
 
 async function loadCancellationsDashboard() {
   const region = SMJ.getRegion();
@@ -306,7 +306,7 @@ async function loadCancellationRisk(showLoading = true) {
   if (showLoading) SMJ.setLoading('cancel-risk-panel', false);
 }
 
-/* â”€â”€ Recovery Constellation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  Recovery Constellation  */
 
 // Singleton tooltip element shared across all constellation nodes
 let _rcTooltip = null;
@@ -366,8 +366,8 @@ function showRcTooltip(node, svgEl, evt) {
     </div>
     <div class="rct-row">
       <span class="rct-dot fast"></span>
-      <span class="rct-label">Fast Rebooks (&lt;Â½ lag)</span>
-      <strong class="rct-val">${node.fast_rebook_pct ?? 'â€”'}%</strong>
+      <span class="rct-label">Fast Rebooks (&lt; lag)</span>
+      <strong class="rct-val">${node.fast_rebook_pct ?? ''}%</strong>
     </div>
     <div class="rct-bar-wrap">
       <div class="rct-bar-track">
@@ -414,7 +414,7 @@ function renderRebooking(data) {
     return;
   }
 
-  // Composite recovery score: rebook rate Ã— 0.45 + success Ã— 0.40 + lag speed bonus Ã— 0.15
+  // Composite recovery score: rebook rate  0.45 + success  0.40 + lag speed bonus  0.15
   const scored = rows.map(r => {
     const lagPenalty = Math.max(0, 1 - (r.avg_rebook_lag_days - 8) / 20);
     const score = Math.round(r.rebook_rate_pct * 0.45 + r.rebook_success_pct * 0.40 + lagPenalty * 15);
@@ -590,7 +590,7 @@ function renderRebooking(data) {
       <text class="rc-score-label" x="${nd.x.toFixed(2)}" y="${(nd.y + (nd.y > cy ? 10.6 : -10.6)).toFixed(2)}"
             text-anchor="middle" fill="${nColor}" style="animation-delay:${delay}ms">${nd.score}</text>
       <text class="rc-mini-rebook" x="${nd.x.toFixed(2)}" y="${(nd.y + (nd.y > cy ? 13 : -13)).toFixed(2)}"
-            text-anchor="middle" style="animation-delay:${delay + 60}ms">${nd.rebooked_count ?? 'â€”'}/${nd.total_cancellations ?? 'â€”'}</text>
+            text-anchor="middle" style="animation-delay:${delay + 60}ms">${nd.rebooked_count ?? ''}/${nd.total_cancellations ?? ''}</text>
       <text class="rc-mini-lag" x="${nd.x.toFixed(2)}" y="${(nd.y + (nd.y > cy ? 15.2 : -15.2)).toFixed(2)}"
             text-anchor="middle" style="animation-delay:${delay + 80}ms">${nd.avg_rebook_lag_days}d lag</text>
     `;
@@ -607,7 +607,7 @@ function renderRebooking(data) {
     <text class="rc-core-sub"  x="${cx}" y="${(cy + 3).toFixed(2)}" text-anchor="middle">SCORE</text>
   `;
 
-  // Keep a sorted copy for ranking â€” sort scored BEFORE building HTML
+  // Keep a sorted copy for ranking  sort scored BEFORE building HTML
   const ranked = [...scored].sort((a, b) => b.score - a.score);
 
   stage.innerHTML = `
@@ -635,11 +635,11 @@ function renderRebooking(data) {
           </div>
         `).join('')}
       </div>
-      <div class="rc-hint">Hover to inspect Â· Click to pin</div>
+      <div class="rc-hint">Hover to inspect  Click to pin</div>
     </div>
   `;
 
-  // â”€â”€ Events: hover = tooltip, click = pin detail strip â”€â”€â”€â”€â”€â”€â”€â”€
+  //  Events: hover = tooltip, click = pin detail strip 
   const svgEl = stage.querySelector('.rc-svg');
 
   stage.querySelectorAll('.rc-hit').forEach(el => {
@@ -661,16 +661,16 @@ function renderRebooking(data) {
       const sc      = r.score;
       const scColor = sc >= 70 ? '#028178' : sc >= 50 ? '#F4D25A' : '#FB8281';
       const insight = sc >= 70
-        ? `Strong recovery pipeline. ${cancelEscape(r.region_code)} converts D-1 cancelled appointments efficiently â€” ${r.completed_rebooks ?? 'â€”'} rebooks executed successfully.`
+        ? `Strong recovery pipeline. ${cancelEscape(r.region_code)} converts D-1 cancelled appointments efficiently  ${r.completed_rebooks ?? ''} rebooks executed successfully.`
         : sc >= 50
-        ? `Moderate recovery. ${cancelEscape(r.region_code)} rebooked ${r.rebooked_count ?? 'â€”'} of ${r.total_cancellations ?? 'â€”'} D-1 cancelled appointments but success rate needs improvement.`
-        : `Recovery at risk. Only ${r.rebooked_count ?? 'â€”'} of ${r.total_cancellations ?? 'â€”'} D-1 cancelled appointments were rebooked â€” targeted outreach recommended.`;
+        ? `Moderate recovery. ${cancelEscape(r.region_code)} rebooked ${r.rebooked_count ?? ''} of ${r.total_cancellations ?? ''} D-1 cancelled appointments but success rate needs improvement.`
+        : `Recovery at risk. Only ${r.rebooked_count ?? ''} of ${r.total_cancellations ?? ''} D-1 cancelled appointments were rebooked  targeted outreach recommended.`;
 
       const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
       set('rd-region',  r.region_code);
-      set('rd-rebook',  `${r.rebooked_count ?? 'â€”'} / ${r.total_cancellations ?? 'â€”'} (${r.rebook_rate_pct}%)`);
+      set('rd-rebook',  `${r.rebooked_count ?? ''} / ${r.total_cancellations ?? ''} (${r.rebook_rate_pct}%)`);
       set('rd-lag',     `${r.avg_rebook_lag_days} days`);
-      set('rd-success', `${r.completed_rebooks ?? 'â€”'} executed successfully (${r.rebook_success_pct}%)`);
+      set('rd-success', `${r.completed_rebooks ?? ''} executed successfully (${r.rebook_success_pct}%)`);
       set('rd-score',   sc);
       const scoreEl = document.getElementById('rd-score');
       if (scoreEl) scoreEl.style.color = scColor;

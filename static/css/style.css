@@ -1,9 +1,9 @@
-﻿/* ============================================================
+/* ============================================================
    Smart Meter Journey Field Planning Platform
-   Design System â€” Extended from DAA-Project dark theme
+   Design System  Extended from DAA-Project dark theme
    ============================================================ */
 
-/* â”€â”€â”€ CSS Variables â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  CSS Variables  */
 :root {
   /* Brand theme palette */
   --brand-primary:   #028178;
@@ -109,7 +109,7 @@
   --shadow-lg:       0 8px 32px rgba(0,0,0,0.50);
 }
 
-/* â”€â”€â”€ Reset & Base â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  Reset & Base  */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -128,18 +128,18 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* â”€â”€â”€ Scrollbar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  Scrollbar  */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--border-accent); border-radius: 3px; }
 
-/* â”€â”€â”€ Layout Shell â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  Layout Shell  */
 .app-shell {
   display: flex;
   min-height: 100vh;
 }
 
-/* â”€â”€â”€ Sidebar Navigation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  Sidebar Navigation  */
 .sidebar {
   width: max-content;
   min-width: var(--nav-fluid-min);
@@ -376,7 +376,7 @@ body {
   height: 16px;
 }
 
-/* â”€â”€â”€ Main Content Area â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  Main Content Area  */
 .main-content {
   flex: 1;
   margin-left: var(--nav-current-width, var(--nav-width));
@@ -388,7 +388,7 @@ body {
 
 .sidebar.collapsed ~ .main-content { margin-left: var(--nav-current-width, var(--nav-collapsed)); }
 
-/* â”€â”€â”€ Top Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  Top Header  */
 .top-header {
   height: var(--header-height);
   background: var(--bg-surface);
@@ -534,14 +534,14 @@ body {
 .filter-select:focus { border-color: var(--brand-accent); }
 .filter-select option { background: var(--bg-card); }
 
-/* â”€â”€â”€ Page Content â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  Page Content  */
 .page-content {
   flex: 1;
   padding: 14px 18px;
   overflow-y: auto;
 }
 
-/* â”€â”€â”€ View Management â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  View Management  */
 .view { display: none; }
 .view.active { display: block; }
 
@@ -555,7 +555,7 @@ body {
 #view-cancellations .recovery-constellation-card { order: 3; }
 #view-cancellations .combined-risk-panel { order: 4; margin-top: 14px; }
 
-/* â”€â”€â”€ KPI Cards â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  KPI Cards  */
 .kpi-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -724,7 +724,7 @@ body {
   left: 14px;
 }
 
-/* â”€â”€â”€ Cards & Panels â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  Cards & Panels  */
 .card {
   --card-accent: var(--brand-accent);
   background:
@@ -782,7 +782,7 @@ body {
   padding: 12px;
 }
 
-/* â”€â”€â”€ Dashboard Grids â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  Dashboard Grids  */
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
 .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px; }
 .grid-7-5 { display: grid; grid-template-columns: 7fr 5fr; gap: 12px; margin-bottom: 12px; }
@@ -814,7 +814,7 @@ body {
   padding-bottom: 6px;
 }
 
-/* â”€â”€â”€ Chart Containers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  Chart Containers  */
 .chart-wrap {
   position: relative;
   width: 100%;
@@ -852,7 +852,7 @@ body {
   height: 170px;
 }
 
-/* â”€â”€â”€ Scenario Assumptions Panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  Scenario Assumptions Panel  */
 .sc-assumptions {
   display: none;
   margin-top: 20px;
@@ -946,7 +946,7 @@ body {
   .sc-assumptions-grid { grid-template-columns: 1fr; }
 }
 
-/* â”€â”€â”€ Tables â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  Tables  */
 .data-table {
   width: 100%;
   border-collapse: collapse;
@@ -976,7 +976,7 @@ body {
 .data-table tr:hover td { background: rgba(255,255,255,0.03); }
 .data-table tr:last-child td { border-bottom: none; }
 
-/* â”€â”€â”€ RAG Status Badges â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  RAG Status Badges  */
 .rag {
   display: inline-flex;
   align-items: center;
@@ -993,11 +993,11 @@ body {
 .rag.Red    { background: var(--crit-bg); color: var(--crit); }
 
 .rag::before {
-  content: 'â—';
+  content: '';
   font-size: 8px;
 }
 
-/* â”€â”€â”€ Priority Badges â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  Priority Badges  */
 .priority {
   display: inline-block;
   padding: 2px 8px;
@@ -1012,7 +1012,7 @@ body {
 .priority.Medium   { background: var(--info-bg); color: var(--info); border: 1px solid rgba(2,194,183,0.3); }
 .priority.Low      { background: var(--ok-bg);   color: var(--ok);   border: 1px solid rgba(2,129,120,0.3); }
 
-/* â”€â”€â”€ Funnel Chart â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  Funnel Chart  */
 .funnel-container {
   min-height: 100%;
   padding: 12px 0 4px;
@@ -2261,7 +2261,7 @@ body {
   font-weight: 900;
 }
 
-/* â”€â”€â”€ AI Recommendation Cards â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  AI Recommendation Cards  */
 .rec-list {
   display: flex;
   flex-direction: column;
@@ -2337,7 +2337,7 @@ body {
   color: var(--text-secondary);
 }
 
-/* â”€â”€â”€ Planning Grid (Field Ops) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  Planning Grid (Field Ops)  */
 /* Customer Interaction Classification */
 .interaction-route-list {
   display: grid;
@@ -2568,7 +2568,7 @@ body {
   flex-shrink: 0;
 }
 
-/* â”€â”€â”€ Scenario Panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  Scenario Panel  */
 .scenario-panel {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -2687,7 +2687,7 @@ body {
   text-align: right;
 }
 
-/* â”€â”€â”€ Buttons â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  Buttons  */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -2734,7 +2734,7 @@ body {
 .btn-sm { padding: 4px 10px; font-size: 11px; }
 .btn-lg { padding: 10px 24px; font-size: 14px; }
 
-/* â”€â”€â”€ Tabs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  Tabs  */
 .tab-bar {
   display: flex;
   gap: 2px;
@@ -4133,7 +4133,7 @@ body {
   font-size: 10px;
 }
 
-/* â”€â”€â”€ Waterfall Chart â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  Waterfall Chart  */
 .risk-prediction-card {
   flex: 1;
   display: grid;
@@ -4269,7 +4269,7 @@ body {
   height: 200px;
 }
 
-/* â”€â”€â”€ Loading Spinner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  Loading Spinner  */
 .loading {
   display: flex;
   align-items: center;
@@ -4315,7 +4315,7 @@ body {
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* â”€â”€â”€ Empty State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  Empty State  */
 .empty-state {
   text-align: center;
   padding: 24px 14px;
@@ -4326,7 +4326,7 @@ body {
 .empty-state .empty-title { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
 .empty-state .empty-desc  { font-size: 12px; }
 
-/* â”€â”€â”€ Alerts â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  Alerts  */
 .alert {
   padding: 8px 10px;
   border-radius: var(--radius-sm);
@@ -4343,7 +4343,7 @@ body {
 .alert-crit { background: var(--crit-bg); color: #B84A4A; border-color: rgba(251,130,129,0.25); }
 .alert-info { background: var(--info-bg); color: #02C2B7; border-color: rgba(2,194,183,0.25); }
 
-/* â”€â”€â”€ Progress / Utilisation Rings â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  Progress / Utilisation Rings  */
 /* Cancellation risk panel */
 #cancel-risk-panel > .grid-2 {
   display: block;
@@ -4392,7 +4392,7 @@ body {
   text-align: center;
 }
 
-/* â”€â”€â”€ Modals â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  Modals  */
 .modal-overlay {
   display: none;
   position: fixed;
@@ -4692,7 +4692,7 @@ body {
   cursor: not-allowed;
 }
 
-/* â”€â”€â”€ AI Summary Bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  AI Summary Bar  */
 .ai-summary-bar {
   background: linear-gradient(135deg, rgba(2,129,120,0.15), rgba(2,194,183,0.10));
   border: 1px solid var(--border-accent);
@@ -4713,7 +4713,7 @@ body {
   line-height: 1.45;
 }
 
-/* â”€â”€â”€ Stat Chips â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  Stat Chips  */
 .stat-chip {
   display: inline-flex;
   align-items: center;
@@ -4734,7 +4734,7 @@ body {
 
 .stat-chip strong { color: var(--text-primary); font-size: 12px; }
 
-/* â”€â”€â”€ Recovery Constellation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  Recovery Constellation  */
 .recovery-constellation-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -5314,7 +5314,7 @@ body {
   50%       { r: 14; opacity: 0.6; }
 }
 
-/* â”€â”€â”€ Recovery Constellation Tooltip â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  Recovery Constellation Tooltip  */
 .rc-tooltip {
   position: fixed;
   z-index: 9999;
@@ -5676,7 +5676,7 @@ body {
   color: var(--text-primary);
 }
 
-/* â”€â”€â”€ Responsive â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  Responsive  */
 @media (max-width: 1200px) {
   .grid-2, .grid-7-5, .grid-5-7 { grid-template-columns: 1fr; }
   #journey-kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -5930,7 +5930,7 @@ body {
   .page-content { padding: 14px; }
 }
 
-/* â”€â”€â”€ Utilities â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  Utilities  */
 .text-ok   { color: var(--ok);   }
 .text-warn { color: var(--warn); }
 .text-crit { color: var(--crit); }
@@ -5954,7 +5954,7 @@ body {
 .align-center  { align-items: center; }
 .justify-between{ justify-content: space-between; }
 
-/* â”€â”€â”€ Utilities â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  Utilities  */
 .text-ok   { color: var(--ok);   }
 .text-warn { color: var(--warn); }
 .text-crit { color: var(--crit); }

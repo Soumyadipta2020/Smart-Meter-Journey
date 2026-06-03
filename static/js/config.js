@@ -1,11 +1,11 @@
-﻿/* SMJ â€” Client-side configuration and shared utilities */
+/* SMJ - Client-side configuration and shared utilities */
 const SMJ = {
   version: '1.0.0',
   charts: {},   // registered Chart.js instances
   apiCache: new Map(),
   apiCacheTtlMs: 60_000,
 
-  // Brand colours â€” mirror CSS variables for Chart.js
+  // Brand colours - mirror CSS variables for Chart.js
   colors: {
     primary:   '#028178',
     accent:    '#02C2B7',
@@ -118,11 +118,11 @@ const SMJ = {
 
   // Format helpers
   fmt: {
-    num:  (v) => v == null ? 'â€”' : Number(v).toLocaleString('en-GB'),
-    pct:  (v) => v == null ? 'â€”' : Number(v).toFixed(1) + '%',
-    gbp:  (v) => v == null ? 'â€”' : 'Â£' + Number(v).toLocaleString('en-GB', { maximumFractionDigits: 0 }),
-    gbpK: (v) => v == null ? 'â€”' : 'Â£' + (Number(v) / 1000).toFixed(0) + 'k',
-    gbpM: (v) => v == null ? 'â€”' : 'Â£' + (Number(v) / 1_000_000).toFixed(2) + 'M',
+    num:  (v) => v == null ? '--' : Number(v).toLocaleString('en-GB'),
+    pct:  (v) => v == null ? '--' : Number(v).toFixed(1) + '%',
+    gbp:  (v) => v == null ? '--' : 'GBP ' + Number(v).toLocaleString('en-GB', { maximumFractionDigits: 0 }),
+    gbpK: (v) => v == null ? '--' : 'GBP ' + (Number(v) / 1000).toFixed(0) + 'k',
+    gbpM: (v) => v == null ? '--' : 'GBP ' + (Number(v) / 1_000_000).toFixed(2) + 'M',
   },
 
   getRegion: () => document.getElementById('global-region')?.value || '',

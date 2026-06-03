@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
@@ -6,16 +6,16 @@
   <title>Smart Meter Journey - Appointment and Resource Planning</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/static/css/style.css" />
+  <link rel="stylesheet" href="/static/css/style.css?v=3" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
 
 <div class="app-shell">
 
-  <!-- â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  <!-- 
        SIDEBAR NAVIGATION
-  â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+   -->
   <aside class="sidebar" id="sidebar">
 
     <div class="sidebar-brand" aria-label="Smart Meter Journey">
@@ -40,11 +40,11 @@
       <div class="nav-section">
         <div class="nav-section-label">Appointments</div>
         <div class="nav-item active" data-view="journey" onclick="switchView('journey', this)">
-          <span class="nav-icon">ðŸ“Š</span>
+          <span class="nav-icon"></span>
           <span class="nav-label">Appointment Journey</span>
         </div>
         <div class="nav-item" data-view="cancellations" onclick="switchView('cancellations', this)">
-          <span class="nav-icon">âŒ</span>
+          <span class="nav-icon"></span>
           <span class="nav-label">Risk & Recovery</span>
         </div>
       </div>
@@ -52,7 +52,7 @@
       <div class="nav-section">
         <div class="nav-section-label">Planning</div>
         <div class="nav-item" data-view="field-ops" onclick="switchView('field-ops', this)">
-          <span class="nav-icon">ðŸ”§</span>
+          <span class="nav-icon"></span>
           <span class="nav-label">Planning</span>
         </div>
       </div>
@@ -60,7 +60,7 @@
       <div class="nav-section">
         <div class="nav-section-label">Finance</div>
         <div class="nav-item" data-view="financial" onclick="switchView('financial', this)">
-          <span class="nav-icon">ðŸ’·</span>
+          <span class="nav-icon"></span>
           <span class="nav-label">Scenario Impact</span>
         </div>
       </div>
@@ -73,16 +73,16 @@
         <span class="nav-label sidebar-toggle-label">Collapse Sidebar</span>
       </div>
       <div class="nav-item" onclick="toggleTheme()">
-        <span class="nav-icon" id="theme-icon">ðŸŒ™</span>
+        <span class="nav-icon" id="theme-icon"></span>
         <span class="nav-label">Toggle Theme</span>
       </div>
     </div>
 
   </aside>
 
-  <!-- â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  <!-- 
        MAIN CONTENT
-  â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+   -->
   <main class="main-content">
 
     <!-- Top Header -->
@@ -108,8 +108,8 @@
             <option value="YRK">Yorkshire</option>
           </select>
         </div>
-        <div class="btn-icon" onclick="refreshCurrentView()" title="Refresh">â†»</div>
-        <div class="btn-icon" onclick="exportCurrentView()" title="Export">â¬‡</div>
+        <div class="btn-icon" onclick="refreshCurrentView()" title="Refresh"></div>
+        <div class="btn-icon" onclick="exportCurrentView()" title="Export"></div>
         <div class="btn-icon ai-trigger ok" id="ai-trigger" onclick="openAiPanel()" title="AI Insights"></div>
       </div>
     </header>
@@ -117,28 +117,23 @@
     <!-- Page Content -->
     <div class="page-content">
 
-      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-           MODULE 1 â€” BOOKINGS TO COMPLETIONS JOURNEY
-      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+      <!-- 
+           MODULE 1 - BOOKINGS TO COMPLETIONS JOURNEY
+       -->
       <div class="view active" id="view-journey">
 
         <!-- AI Summary Bar -->
         <div class="ai-summary-bar" id="journey-ai-summary">
-          <div class="ai-icon">ðŸ¤–</div>
+          <div class="ai-icon"></div>
           <div class="ai-text" id="journey-ai-text">Loading operational health summary...</div>
         </div>
 
-        <!-- KPI Cards -->
-        <div class="kpi-grid" id="journey-kpis">
-          <div class="kpi-card info"><div class="kpi-label">Customer Data Loaded Into Dialler</div><div class="kpi-value" id="kpi-customers">â€”</div><div class="kpi-icon">ðŸ‘¤</div></div>
-          <div class="kpi-card info"><div class="kpi-label">Contact Attempts</div><div class="kpi-value" id="kpi-contacts">â€”</div><div class="kpi-icon">ðŸ“ž</div></div>
-          <div class="kpi-card info"><div class="kpi-label">Appointments Booked</div><div class="kpi-value" id="kpi-appointments-booked">â€”</div><div class="kpi-icon">ðŸ“‹</div></div>
-          <div class="kpi-card warn"><div class="kpi-label">Appointments Cancelled (D-1)</div><div class="kpi-value" id="kpi-cancellations">â€”</div><div class="kpi-icon">âš ï¸</div></div>
-          <div class="kpi-card info"><div class="kpi-label">Total Visits</div><div class="kpi-value" id="kpi-bookings">â€”</div><div class="kpi-icon">ðŸ“…</div></div>
-          <div class="kpi-card warn"><div class="kpi-label">Appointments Aborted On The Day Of Visit</div><div class="kpi-value" id="kpi-aborts">â€”</div><div class="kpi-icon">ðŸš«</div></div>
-          <div class="kpi-card ok"><div class="kpi-label">Executed Successfully</div><div class="kpi-value" id="kpi-completions">â€”</div><div class="kpi-icon">âœ…</div></div>
-          <div class="kpi-card ok" id="kpi-success-rate-card"><div class="kpi-label">Success Rate</div><div class="kpi-value" id="kpi-completion-rate">â€”</div><div class="kpi-icon">ðŸ“ˆ</div></div>
-          <div class="kpi-card"><div class="kpi-label">Average Contacts Per Customer</div><div class="kpi-value" id="kpi-avg-contacts">â€”</div><div class="kpi-icon">ðŸ‘¤</div></div>
+        <!-- Appointment to Visit Success Funnel -->
+        <div class="card mb-16" id="appointment-to-visit-funnel-card">
+          <div class="card-header"><div class="card-title">Appointment to Visit Success Funnel</div></div>
+          <div class="card-body" id="funnel-metrics-body">
+            <div class="loading"><span class="spinner"></span></div>
+          </div>
         </div>
 
         <div class="grid-5-7">
@@ -147,7 +142,7 @@
           <div class="card">
             <div class="card-header">
               <div>
-                <div class="card-title">ðŸ“Š Smart Meter Appointment Journey Funnel</div>
+                <div class="card-title"> Smart Meter Appointment Journey Funnel</div>
                 <div class="card-subtitle">Shows customer data loaded into dialler, contact attempts, appointments booked, D-1 cancellations, total visits, same-day aborts and successful execution</div>
               </div>
             </div>
@@ -160,7 +155,7 @@
           <div class="card">
             <div class="card-header">
               <div>
-                <div class="card-title">ðŸ“ˆ Weekly Smart Meter Appointment and Success Trend</div>
+                <div class="card-title"> Weekly Smart Meter Appointment and Success Trend</div>
                 <div class="card-subtitle">Compares total visits, executed-successfully outcomes, D-1 cancellations and same-day aborts</div>
               </div>
             </div>
@@ -171,19 +166,11 @@
 
         </div>
 
-        <!-- Appointment to Visit Success Funnel -->
-        <div class="card mb-16">
-          <div class="card-header"><div class="card-title">ðŸŽ¯ Appointment to Visit Success Funnel</div></div>
-          <div class="card-body" id="funnel-metrics-body">
-            <div class="loading"><span class="spinner"></span></div>
-          </div>
-        </div>
-
         <!-- Regional Heatmap -->
         <div class="card mb-16">
           <div class="card-header">
             <div>
-              <div class="card-title">ðŸ—ºï¸ Regional Appointment and Success Status</div>
+              <div class="card-title"> Regional Appointment and Success Status</div>
               <div class="card-subtitle">Shows appointments booked, success rate and regional RAG status</div>
             </div>
           </div>
@@ -233,16 +220,16 @@
       </div><!-- /view-journey -->
 
 
-      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-           MODULE 3 â€” APPOINTMENT FALLOUT
-      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+      <!-- 
+           MODULE 3 - APPOINTMENT FALLOUT
+       -->
       <div class="view" id="view-cancellations">
 
         <div class="kpi-grid" id="cancel-kpis">
-          <div class="kpi-card crit"><div class="kpi-label">Appointments Cancelled (D-1)</div><div class="kpi-value" id="can-kpi-total">â€”</div><div class="kpi-icon">âŒ</div></div>
-          <div class="kpi-card crit"><div class="kpi-label">D-1 Cancellation Rate</div><div class="kpi-value" id="can-kpi-rate">â€”</div><div class="kpi-icon">ðŸ“Š</div></div>
-          <div class="kpi-card warn"><div class="kpi-label">Appointments Aborted On The Day Of Visit</div><div class="kpi-value" id="can-kpi-aborts">â€”</div><div class="kpi-icon">ðŸš«</div></div>
-          <div class="kpi-card warn"><div class="kpi-label">Same-Day Abort Rate</div><div class="kpi-value" id="can-kpi-abort-rate">â€”</div><div class="kpi-icon">ðŸ“‰</div></div>
+          <div class="kpi-card crit"><div class="kpi-label">Appointments Cancelled (D-1)</div><div class="kpi-value" id="can-kpi-total">-</div><div class="kpi-icon"></div></div>
+          <div class="kpi-card crit"><div class="kpi-label">D-1 Cancellation Rate</div><div class="kpi-value" id="can-kpi-rate">-</div><div class="kpi-icon"></div></div>
+          <div class="kpi-card warn"><div class="kpi-label">Appointments Aborted On The Day Of Visit</div><div class="kpi-value" id="can-kpi-aborts">-</div><div class="kpi-icon"></div></div>
+          <div class="kpi-card warn"><div class="kpi-label">Same-Day Abort Rate</div><div class="kpi-value" id="can-kpi-abort-rate">-</div><div class="kpi-icon"></div></div>
         </div>
 
         <div class="cancel-insight-grid mb-16">
@@ -275,11 +262,11 @@
 
 
 
-        <!-- Rebooking Recovery â€” Recovery Constellation -->
+        <!-- Rebooking Recovery - Recovery Constellation -->
         <div class="recovery-constellation-card">
           <div class="recovery-constellation-header">
             <div>
-              <div class="recovery-constellation-title">ðŸ”„ Appointment Rebooking Recovery by Region</div>
+              <div class="recovery-constellation-title"> Appointment Rebooking Recovery by Region</div>
               <div class="recovery-constellation-subtitle">How effectively each region recovers D-1 cancelled appointments through rebooking</div>
             </div>
             <div class="recovery-legend">
@@ -292,22 +279,22 @@
             <div class="loading"><span class="spinner"></span> Loading recovery data...</div>
           </div>
           <div class="recovery-detail-strip" id="recovery-detail-strip" style="display:none">
-            <div class="recovery-detail-region" id="rd-region">â€”</div>
+            <div class="recovery-detail-region" id="rd-region">-</div>
             <div class="recovery-detail-metrics">
-              <div><span>Rebook Rate</span><strong id="rd-rebook">â€”</strong></div>
-              <div><span>Avg Lag</span><strong id="rd-lag">â€”</strong></div>
-              <div><span>Success Rate</span><strong id="rd-success">â€”</strong></div>
-              <div><span>Recovery Score</span><strong id="rd-score">â€”</strong></div>
+              <div><span>Rebook Rate</span><strong id="rd-rebook">-</strong></div>
+              <div><span>Avg Lag</span><strong id="rd-lag">-</strong></div>
+              <div><span>Success Rate</span><strong id="rd-success">-</strong></div>
+              <div><span>Recovery Score</span><strong id="rd-score">-</strong></div>
             </div>
-            <div class="recovery-detail-insight" id="rd-insight">â€”</div>
+            <div class="recovery-detail-insight" id="rd-insight">-</div>
           </div>
         </div>
 
-        <!-- Rebooking Recovery â€” Supplier Constellation -->
+        <!-- Rebooking Recovery - Supplier Constellation -->
         <div class="recovery-constellation-card mt-16" style="margin-top: 16px;">
           <div class="recovery-constellation-header">
             <div>
-              <div class="recovery-constellation-title">ðŸ”„ Appointment Rebooking Recovery by Supplier</div>
+              <div class="recovery-constellation-title"> Appointment Rebooking Recovery by Supplier</div>
               <div class="recovery-constellation-subtitle">How effectively top suppliers recover D-1 cancelled appointments through rebooking</div>
             </div>
             <div class="recovery-legend">
@@ -341,18 +328,18 @@
       </div><!-- /view-cancellations -->
 
 
-      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-           MODULE 4 â€” FIELD OPERATIONS & ENGINEER PLANNING
-      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+      <!-- 
+           MODULE 4 - FIELD OPERATIONS & ENGINEER PLANNING
+       -->
       <div class="view resource-planning-page" id="view-field-ops">
 
         <!-- Forecast KPIs -->
         <div class="forecast-kpi-row">
           <div class="kpi-grid forecast-kpi-grid" id="forecast-kpis">
-            <div class="kpi-card info"><div class="kpi-label">Contact Attempts</div><div class="kpi-value" id="fc-kpi-volume">â€”</div><div class="kpi-icon">ðŸ“ž</div></div>
-            <div class="kpi-card ok"><div class="kpi-label">Total Visits</div><div class="kpi-value" id="fc-kpi-bookings">â€”</div><div class="kpi-icon">ðŸ“…</div></div>
-            <div class="kpi-card ok"><div class="kpi-label">Contact Attempt to Visit Rate</div><div class="kpi-value" id="fc-kpi-conversion">â€”</div><div class="kpi-icon">ðŸŽ¯</div></div>
-            <div class="kpi-card warn"><div class="kpi-label">Abandonment Rate</div><div class="kpi-value" id="fc-kpi-abandon">â€”</div><div class="kpi-icon">ðŸ“µ</div></div>
+            <div class="kpi-card info"><div class="kpi-label">Contact Attempts</div><div class="kpi-value" id="fc-kpi-volume">-</div><div class="kpi-icon"></div></div>
+            <div class="kpi-card ok"><div class="kpi-label">Total Visits</div><div class="kpi-value" id="fc-kpi-bookings">-</div><div class="kpi-icon"></div></div>
+            <div class="kpi-card ok"><div class="kpi-label">Contact Attempt to Visit Rate</div><div class="kpi-value" id="fc-kpi-conversion">-</div><div class="kpi-icon"></div></div>
+            <div class="kpi-card warn"><div class="kpi-label">Abandonment Rate</div><div class="kpi-value" id="fc-kpi-abandon">-</div><div class="kpi-icon"></div></div>
           </div>
           <div class="forecast-model-toggle-card">
             <div class="forecast-toggle-label">Forecast Model</div>
@@ -367,7 +354,7 @@
             <div class="card forecast-ensemble-card">
               <div class="card-header">
                 <div>
-                  <div class="card-title" id="forecast-chart-title">ðŸ“ˆ 52-Week Smart Meter Contact Attempt Forecast</div>
+                  <div class="card-title" id="forecast-chart-title"> 52-Week Smart Meter Contact Attempt Forecast</div>
                   <div class="card-subtitle">2026 weekly contact-attempt forecast compared with 2025 same-week actuals, including P10, P50 and P90 planning bands</div>
                 </div>
                 <div class="card-actions">
@@ -390,7 +377,7 @@
               </div>
             </div>
             <div class="card model-accuracy-card">
-              <div class="card-header"><div class="card-title">ðŸ”¬ Contact Attempt Forecast Model Accuracy</div></div>
+              <div class="card-header"><div class="card-title"> Contact Attempt Forecast Model Accuracy</div></div>
               <div class="card-body">
                 <div class="model-accuracy-board" id="model-accuracy-body">
                   <div class="loading"><span class="spinner"></span></div>
@@ -398,7 +385,7 @@
               </div>
             </div>
             <div class="card model-comparison-card">
-              <div class="card-header"><div class="card-title">ðŸ“Š Forecast Comparison by Model</div></div>
+              <div class="card-header"><div class="card-title"> Forecast Comparison by Model</div></div>
               <div class="card-body">
                 <div class="chart-wrap model-comparison-chart">
                   <canvas id="model-comparison-chart"></canvas>
@@ -487,7 +474,7 @@
             </div>
             <div class="card-body" id="optimise-body">
               <div class="empty-state">
-                <div class="empty-icon">âš¡</div>
+                <div class="empty-icon"></div>
                 <div class="empty-title">Click "Run Optimisation" to generate recommendations</div>
                 <div class="empty-desc">Analyses capacity gaps and recommends workforce rebalancing</div>
               </div>
@@ -498,22 +485,22 @@
       </div><!-- /view-field-ops -->
 
 
-      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-           MODULE 5 â€” FINANCIAL SCENARIO PLANNING
-      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+      <!-- 
+           MODULE 5 - FINANCIAL SCENARIO PLANNING
+       -->
       <div class="view" id="view-financial">
 
         <div class="kpi-grid" id="fin-kpis">
-          <div class="kpi-card ok"><div class="kpi-label">Total Revenue</div><div class="kpi-value" id="fin-kpi-revenue">â€”</div><div class="kpi-icon">ðŸ’·</div></div>
-          <div class="kpi-card"><div class="kpi-label">Total Cost</div><div class="kpi-value" id="fin-kpi-cost">â€”</div><div class="kpi-icon">ðŸ’¸</div></div>
-          <div class="kpi-card ok"><div class="kpi-label">Gross Margin</div><div class="kpi-value" id="fin-kpi-margin">â€”</div><div class="kpi-icon">ðŸ“ˆ</div></div>
-          <div class="kpi-card"><div class="kpi-label">Margin %</div><div class="kpi-value" id="fin-kpi-margin-pct">â€”</div><div class="kpi-icon">%</div></div>
-          <div class="kpi-card"><div class="kpi-label">Cost Per Executed Appointment</div><div class="kpi-value" id="fin-kpi-cpp">â€”</div><div class="kpi-icon">ðŸ”§</div></div>
+          <div class="kpi-card ok"><div class="kpi-label">Total Revenue</div><div class="kpi-value" id="fin-kpi-revenue">-</div><div class="kpi-icon"></div></div>
+          <div class="kpi-card"><div class="kpi-label">Total Cost</div><div class="kpi-value" id="fin-kpi-cost">-</div><div class="kpi-icon"></div></div>
+          <div class="kpi-card ok"><div class="kpi-label">Gross Margin</div><div class="kpi-value" id="fin-kpi-margin">-</div><div class="kpi-icon"></div></div>
+          <div class="kpi-card"><div class="kpi-label">Margin %</div><div class="kpi-value" id="fin-kpi-margin-pct">-</div><div class="kpi-icon">%</div></div>
+          <div class="kpi-card"><div class="kpi-label">Cost Per Executed Appointment</div><div class="kpi-value" id="fin-kpi-cpp">-</div><div class="kpi-icon"></div></div>
         </div>
 
         <div class="grid-2 mb-16">
           <div class="card">
-            <div class="card-header"><div class="card-title">ðŸ“Š Monthly Smart Meter Delivery Revenue vs Cost</div></div>
+            <div class="card-header"><div class="card-title"> Monthly Smart Meter Delivery Revenue vs Cost</div></div>
             <div class="card-body">
               <div class="chart-wrap chart-h-300">
                 <canvas id="fin-monthly-chart"></canvas>
@@ -521,7 +508,7 @@
             </div>
           </div>
           <div class="card">
-            <div class="card-header"><div class="card-title">ðŸŽ¯ Margin by Smart Meter Appointment Type</div></div>
+            <div class="card-header"><div class="card-title"> Margin by Smart Meter Appointment Type</div></div>
             <div class="card-body">
               <div class="chart-wrap chart-h-300">
                 <canvas id="fin-jobtype-chart"></canvas>
@@ -533,10 +520,10 @@
         <!-- Scenario Builder -->
         <div class="card mb-16">
           <div class="card-header">
-            <div><div class="card-title">âš™ï¸ Appointment and Resource Financial Scenario Builder</div><div class="card-subtitle">Adjust appointment volume, success rates and engineer capacity to simulate P&L outcomes</div></div>
+            <div><div class="card-title"> Appointment and Resource Financial Scenario Builder</div><div class="card-subtitle">Adjust appointment volume, success rates and engineer capacity to simulate P&L outcomes</div></div>
             <div class="card-actions">
               <button class="btn btn-secondary btn-sm" onclick="resetScenario()">Reset</button>
-              <button class="btn btn-primary" onclick="runScenario()">â–¶ Run Scenario</button>
+              <button class="btn btn-primary" onclick="runScenario()"> Run Scenario</button>
             </div>
           </div>
           <div class="card-body">
@@ -601,12 +588,12 @@
             <div class="grid-2">
               <div>
                 <div class="kpi-grid" style="grid-template-columns:1fr 1fr; gap:10px; margin-bottom:0">
-                  <div class="kpi-card ok"><div class="kpi-label">Revenue</div><div class="kpi-value" id="sc-res-revenue">â€”</div><div class="kpi-icon">ðŸ’·</div></div>
-                  <div class="kpi-card"><div class="kpi-label">Total Cost</div><div class="kpi-value" id="sc-res-cost">â€”</div><div class="kpi-icon">ðŸ’¸</div></div>
-                  <div class="kpi-card ok"><div class="kpi-label">Margin</div><div class="kpi-value" id="sc-res-margin">â€”</div><div class="kpi-icon">ðŸ“ˆ</div></div>
-                  <div class="kpi-card"><div class="kpi-label">Margin %</div><div class="kpi-value" id="sc-res-margin-pct">â€”</div><div class="kpi-icon">%</div></div>
-                  <div class="kpi-card"><div class="kpi-label">Cost/Executed Appointment</div><div class="kpi-value" id="sc-res-cpp">â€”</div><div class="kpi-icon">ðŸ”§</div></div>
-                  <div class="kpi-card"><div class="kpi-label">Capacity Status</div><div class="kpi-value" id="sc-res-capacity">â€”</div><div class="kpi-icon">âš¡</div></div>
+                  <div class="kpi-card ok"><div class="kpi-label">Revenue</div><div class="kpi-value" id="sc-res-revenue">-</div><div class="kpi-icon"></div></div>
+                  <div class="kpi-card"><div class="kpi-label">Total Cost</div><div class="kpi-value" id="sc-res-cost">-</div><div class="kpi-icon"></div></div>
+                  <div class="kpi-card ok"><div class="kpi-label">Margin</div><div class="kpi-value" id="sc-res-margin">-</div><div class="kpi-icon"></div></div>
+                  <div class="kpi-card"><div class="kpi-label">Margin %</div><div class="kpi-value" id="sc-res-margin-pct">-</div><div class="kpi-icon">%</div></div>
+                  <div class="kpi-card"><div class="kpi-label">Cost/Executed Appointment</div><div class="kpi-value" id="sc-res-cpp">-</div><div class="kpi-icon"></div></div>
+                  <div class="kpi-card"><div class="kpi-label">Capacity Status</div><div class="kpi-value" id="sc-res-capacity">-</div><div class="kpi-icon"></div></div>
                 </div>
               </div>
               <div class="chart-wrap chart-h-260">
@@ -645,7 +632,7 @@
 
         <!-- 2026 Forecast Profitability -->
         <div class="card">
-          <div class="card-header"><div class="card-title">ðŸ”® Forecast Profitability from Planned Appointments Booked</div></div>
+          <div class="card-header"><div class="card-title"> Forecast Profitability from Planned Appointments Booked</div></div>
           <div class="card-body">
             <div class="chart-wrap chart-h-300">
               <canvas id="forecast-profit-chart"></canvas>
@@ -698,14 +685,14 @@
   </button>
 </div>
 
-<!-- â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+<!-- 
      AI PANEL MODAL
-â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+ -->
 <div class="modal-overlay" id="ai-modal">
   <div class="modal">
     <div class="modal-header">
       <div class="modal-title">AI Operational Intelligence</div>
-      <div class="modal-close" onclick="closeAiPanel()">âœ•</div>
+      <div class="modal-close" onclick="closeAiPanel()"></div>
     </div>
     <div class="modal-body" id="ai-modal-body">
       <div class="loading"><span class="spinner"></span> Generating insights...</div>
@@ -713,17 +700,17 @@
   </div>
 </div>
 
-<!-- â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+<!-- 
      JAVASCRIPT MODULES
-â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
-<script src="/static/js/theme.js?v=2"></script>
-<script src="/static/js/config.js?v=2"></script>
-<script src="/static/js/dashboard.js?v=2"></script>
-<script src="/static/js/forecasting.js?v=2"></script>
-<script src="/static/js/cancellations.js?v=2"></script>
-<script src="/static/js/field_ops.js?v=2"></script>
-<script src="/static/js/financial.js?v=2"></script>
-<script src="/static/js/app.js?v=2"></script>
+ -->
+<script src="/static/js/theme.js?v=3"></script>
+<script src="/static/js/config.js?v=3"></script>
+<script src="/static/js/dashboard.js?v=3"></script>
+<script src="/static/js/forecasting.js?v=3"></script>
+<script src="/static/js/cancellations.js?v=3"></script>
+<script src="/static/js/field_ops.js?v=3"></script>
+<script src="/static/js/financial.js?v=3"></script>
+<script src="/static/js/app.js?v=3"></script>
 
 </body>
 </html>

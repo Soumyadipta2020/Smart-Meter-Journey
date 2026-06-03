@@ -1,13 +1,13 @@
-﻿"""
+"""
 Smart Meter Journey - Appointment Planning & Utility Operations Platform
-Flask application â€” extends DAA-Project architecture patterns.
+Flask application  extends DAA-Project architecture patterns.
 
 Modules:
-  1. Appointment Journey              â€” executive funnel dashboard
-  2. Contact Centre Forecasting       â€” multi-model channel forecasting
-  3. Appointment Fallout             â€” root cause + AI prediction
-  4. Field Operations & Engineer Planning â€” scheduling + optimisation
-  5. Financial Scenario Planning      â€” cost/revenue simulation
+  1. Appointment Journey               executive funnel dashboard
+  2. Contact Centre Forecasting        multi-model channel forecasting
+  3. Appointment Fallout              root cause + AI prediction
+  4. Field Operations & Engineer Planning  scheduling + optimisation
+  5. Financial Scenario Planning       cost/revenue simulation
 """
 import os
 import json
@@ -21,12 +21,12 @@ from flask import Flask, jsonify, render_template, request
 from flask_cors import CORS
 from dotenv import load_dotenv
 
-# â”€â”€â”€ Environment â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+#  Environment 
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent
 
-# â”€â”€â”€ Flask App â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+#  Flask App 
 app = Flask(__name__, template_folder="templates", static_folder="static")
 app.secret_key = os.getenv("SECRET_KEY", "smart-meter-journey-dev-secret-2026")
 CORS(app)
@@ -41,7 +41,7 @@ def _request_year(default: int = 2025) -> int:
         return default
     return year if year in SUPPORTED_YEARS else default
 
-# â”€â”€â”€ After-request: no-cache for all /api/* routes (mirrors DAA pattern) â”€â”€â”€â”€â”€
+#  After-request: no-cache for all /api/* routes (mirrors DAA pattern) 
 @app.after_request
 def add_api_no_cache_headers(response):
     if request.path.startswith("/api/"):
@@ -50,7 +50,7 @@ def add_api_no_cache_headers(response):
     return response
 
 
-# â”€â”€â”€ Lazy Engine Imports (avoids startup cost if data not yet generated) â”€â”€â”€â”€â”€
+#  Lazy Engine Imports (avoids startup cost if data not yet generated) 
 def _get_forecasting_engine():
     from engine.forecasting_engine import (
         forecast_channel_volume, get_channel_kpis, get_booking_conversion_funnel
@@ -286,18 +286,18 @@ def _get_ingestion():
     return get_booking_journey, data_health, to_int, to_float, safe_pct, iter_jobs
 
 
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# 
 # FRONTEND VIEWS
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# 
 
 @app.route("/")
 def index():
     return render_template("index.html")
 
 
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-# MODULE 1 â€” BOOKINGS TO COMPLETIONS JOURNEY
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# 
+# MODULE 1  BOOKINGS TO COMPLETIONS JOURNEY
+# 
 
 @app.route("/api/journey/kpis")
 def journey_kpis():
@@ -626,9 +626,9 @@ def journey_interactions():
         return jsonify({"error": str(e)}), 500
 
 
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-# MODULE 2 â€” CONTACT CENTRE FORECASTING
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# 
+# MODULE 2  CONTACT CENTRE FORECASTING
+# 
 
 @app.route("/api/forecasting/channel-kpis")
 def forecasting_channel_kpis():
@@ -665,7 +665,7 @@ def forecasting_funnel():
         return jsonify({"error": str(e)}), 500
 
 
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# 
 @app.route("/api/forecasting/planning-target-kpis")
 def forecasting_planning_target_kpis():
     region = request.args.get("region")
@@ -677,8 +677,8 @@ def forecasting_planning_target_kpis():
         return jsonify({"error": str(e)}), 500
 
 
-# MODULE 3 â€” APPOINTMENT FALLOUT
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# MODULE 3  APPOINTMENT FALLOUT
+# 
 
 @app.route("/api/cancellations/kpis")
 def cancellations_kpis():
@@ -744,9 +744,9 @@ def cancellations_rebooking():
         return jsonify({"error": str(e)}), 500
 
 
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-# MODULE 4 â€” FIELD OPERATIONS & ENGINEER PLANNING
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# 
+# MODULE 4  FIELD OPERATIONS & ENGINEER PLANNING
+# 
 
 @app.route("/api/field-ops/kpis")
 def field_ops_kpis():
@@ -827,9 +827,9 @@ def field_ops_optimise():
 
 
 
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-# MODULE 5 â€” FINANCIAL SCENARIO PLANNING
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# 
+# MODULE 5  FINANCIAL SCENARIO PLANNING
+# 
 
 @app.route("/api/financial/kpis")
 def financial_kpis():
@@ -891,9 +891,9 @@ def financial_forecast():
         return jsonify({"error": "An internal error has occurred."}), 500
 
 
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# 
 # AI RECOMMENDATIONS
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# 
 
 @app.route("/api/ai/recommendations")
 def ai_recommendations():
@@ -944,9 +944,9 @@ def ai_dashboard():
         return jsonify({"error": "An internal error has occurred."}), 500
 
 
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# 
 # SYSTEM / UTILITY
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# 
 
 @app.route("/api/chatbot/message", methods=["POST"])
 def chatbot_message():
@@ -1071,7 +1071,7 @@ def get_regions():
     ])
 
 
-# â”€â”€â”€ Startup: generate data if missing â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+#  Startup: generate data if missing 
 def _ensure_data():
     """Ensure required data files exist without loading them into memory."""
     global _DATA_READY
@@ -1102,7 +1102,7 @@ def _ensure_data():
     _DATA_READY = True
 
 
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# 
 
 _ensure_data()
 

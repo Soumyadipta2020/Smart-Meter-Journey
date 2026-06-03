@@ -1,4 +1,4 @@
-﻿/* SMJ - Theme Manager */
+/* SMJ - Theme Manager */
 (function () {
   const html = document.documentElement;
   const themeVersion = 'SMJ-json-theme-v1';

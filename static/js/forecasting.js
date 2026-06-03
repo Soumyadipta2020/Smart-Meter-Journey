@@ -1,4 +1,4 @@
-﻿/* SMJ â€” Module 2: Contact Centre Forecasting */
+/* SMJ  Module 2: Contact Centre Forecasting */
 
 let _forecastChart = null;
 let _activeForecastTab = 'forecast';
@@ -360,9 +360,9 @@ function renderModelAccuracy(accuracy) {
     return `
       <tr>
         <td><strong>${m}</strong></td>
-        <td>${d.mae?.toFixed(1) || 'â€”'}</td>
-        <td>${d.rmse?.toFixed(1) || 'â€”'}</td>
-        <td><span class="${d.mape < 6 ? 'text-ok' : (d.mape < 10 ? 'text-warn' : 'text-crit')}">${d.mape?.toFixed(2) || 'â€”'}%</span></td>
+        <td>${d.mae?.toFixed(1) || ''}</td>
+        <td>${d.rmse?.toFixed(1) || ''}</td>
+        <td><span class="${d.mape < 6 ? 'text-ok' : (d.mape < 10 ? 'text-warn' : 'text-crit')}">${d.mape?.toFixed(2) || ''}%</span></td>
       </tr>
     `;
   }).join('');

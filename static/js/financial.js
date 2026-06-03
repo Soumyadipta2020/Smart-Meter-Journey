@@ -1,4 +1,4 @@
-﻿/* SMJ â€” Module 5: Financial Scenario Planning */
+/* SMJ - Module 5: Financial Scenario Planning */
 
 async function loadFinancialDashboard() {
   const region = SMJ.getRegion();
@@ -76,7 +76,7 @@ function renderMonthlyChart(trend) {
       plugins: SMJ.chartDefaults.plugins,
       scales: {
         ...SMJ.chartDefaults.scales,
-        y:  { ...SMJ.chartDefaults.scales.y, ticks: { ...SMJ.chartDefaults.scales.y.ticks, callback: v => 'Â£' + (v/1000).toFixed(0) + 'k' } },
+        y:  { ...SMJ.chartDefaults.scales.y, ticks: { ...SMJ.chartDefaults.scales.y.ticks, callback: v => 'GBP ' + (v/1000).toFixed(0) + 'k' } },
         y1: { ...SMJ.chartDefaults.scales.y, position: 'right', grid: { display: false },
                ticks: { ...SMJ.chartDefaults.scales.y.ticks, callback: v => v + '%' } },
       },
@@ -112,11 +112,11 @@ function renderForecastProfit(data) {
   if (!ctx || !data.monthly_forecast?.length) return;
   const mf = data.monthly_forecast;
 
-  // Dynamic y1 range â€” tight padding around actual margin values so fluctuations are visible
+  // Dynamic y1 range - tight padding around actual margin values so fluctuations are visible
   const margins = mf.map(m => m.margin_pct).filter(v => v != null);
   const marginMin = Math.min(...margins);
   const marginMax = Math.max(...margins);
-  const pad = Math.max((marginMax - marginMin) * 0.5, 1.0);  // at least Â±1% padding
+  const pad = Math.max((marginMax - marginMin) * 0.5, 1.0);  // at least +/-1% padding
   const y1Min = Math.floor((marginMin - pad) * 10) / 10;
   const y1Max = Math.ceil((marginMax  + pad) * 10) / 10;
 
@@ -136,7 +136,7 @@ function renderForecastProfit(data) {
       plugins: { ...SMJ.chartDefaults.plugins },
       scales: {
         ...SMJ.chartDefaults.scales,
-        y:  { ...SMJ.chartDefaults.scales.y, ticks: { ...SMJ.chartDefaults.scales.y.ticks, callback: v => 'Â£' + (v/1000).toFixed(0) + 'k' } },
+        y:  { ...SMJ.chartDefaults.scales.y, ticks: { ...SMJ.chartDefaults.scales.y.ticks, callback: v => 'GBP ' + (v/1000).toFixed(0) + 'k' } },
         y1: { ...SMJ.chartDefaults.scales.y, position: 'right', grid: { display: false },
               min: y1Min, max: y1Max,
               ticks: { ...SMJ.chartDefaults.scales.y.ticks, callback: v => v.toFixed(1) + '%' } },
@@ -222,7 +222,7 @@ function renderScenarioResults(data) {
         plugins: { ...SMJ.chartDefaults.plugins, legend: { display: false } },
         scales: {
           ...SMJ.chartDefaults.scales,
-          y: { ...SMJ.chartDefaults.scales.y, ticks: { ...SMJ.chartDefaults.scales.y.ticks, callback: v => 'Â£' + (v/1000).toFixed(0) + 'k' } },
+          y: { ...SMJ.chartDefaults.scales.y, ticks: { ...SMJ.chartDefaults.scales.y.ticks, callback: v => 'GBP ' + (v/1000).toFixed(0) + 'k' } },
         },
       },
     }));
@@ -238,7 +238,7 @@ function renderScenarioAssumptions(data) {
   const contribs = data.job_type_contributions;
   const assumptions = data.assumptions || {};
 
-  // â”€â”€ Revenue breakdown table â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  //  Revenue breakdown table 
   const revTbody = document.querySelector('#sc-revenue-breakdown tbody');
   const revTfoot = document.querySelector('#sc-revenue-breakdown tfoot');
   if (revTbody) {
@@ -260,7 +260,7 @@ function renderScenarioAssumptions(data) {
     </tr>`;
   }
 
-  // â”€â”€ Cost breakdown table â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  //  Cost breakdown table 
   const costTbody = document.querySelector('#sc-cost-breakdown tbody');
   const costTfoot = document.querySelector('#sc-cost-breakdown tfoot');
   if (costTbody) {
@@ -298,15 +298,15 @@ function renderScenarioAssumptions(data) {
       </tr>`;
   }
 
-  // â”€â”€ Formula note â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  //  Formula note 
   const note = document.getElementById('sc-formula-note');
   if (note) {
     note.innerHTML =
       `<strong>Formula:</strong> &nbsp;
-       Revenue = executed appointments Ã— rate/executed appointment &nbsp;Â·&nbsp;
-       Total Cost = (direct cost + same-day abort cost) Ã— 1.${assumptions.overhead_pct || 22} overhead &nbsp;Â·&nbsp;
-       Margin = Revenue âˆ’ Total Cost &nbsp;Â·&nbsp;
-       Cost/Executed Appointment = Total Cost Ã· ${(data.completions || 0).toLocaleString()} executed appointments`;
+       Revenue = executed appointments x rate/executed appointment &nbsp;-&nbsp;
+       Total Cost = (direct cost + same-day abort cost) x 1.${assumptions.overhead_pct || 22} overhead &nbsp;-&nbsp;
+       Margin = Revenue - Total Cost &nbsp;-&nbsp;
+       Cost/Executed Appointment = Total Cost / ${(data.completions || 0).toLocaleString()} executed appointments`;
   }
 }
 

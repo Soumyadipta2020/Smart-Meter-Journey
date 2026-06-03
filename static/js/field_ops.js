@@ -1,4 +1,4 @@
-﻿/* SMJ â€” Module 4: Field Operations & Engineer Planning */
+/* SMJ  Module 4: Field Operations & Engineer Planning */
 
 let _activeOpsTab = 'capacity';
 const RESOURCE_OPT_STORAGE_KEY = 'SMJ-resource-optimisation';
@@ -48,7 +48,7 @@ function renderFieldOpsKPIs(kpis) {
   set('ops-kpi-engineers',   SMJ.fmt.num(kpis.total_engineers));
   set('ops-kpi-util',        SMJ.fmt.pct(kpis.avg_utilisation));
   set('ops-kpi-jobs',        SMJ.fmt.num(kpis.total_jobs_completed));
-  set('ops-kpi-productivity',kpis.productivity_jobs_per_day?.toFixed(2) || 'â€”');
+  set('ops-kpi-productivity',kpis.productivity_jobs_per_day?.toFixed(2) || '');
   set('ops-kpi-absence',     SMJ.fmt.pct(kpis.absence_rate));
   applyOptimisationToKPIs();
 
@@ -117,7 +117,7 @@ function renderCapacityForecast(data) {
   if (data.kpis && data.method) {
     const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
     set('ops-kpi-jobs', SMJ.fmt.num(data.kpis.forecast_capacity_jobs));
-    set('ops-kpi-productivity', data.method.jobs_per_fte_day?.toFixed(2) || 'â€”');
+    set('ops-kpi-productivity', data.method.jobs_per_fte_day?.toFixed(2) || '');
     const absenceRate = data.kpis.avg_required_fte 
       ? (data.kpis.avg_absent_fte / data.kpis.avg_required_fte) * 100 
       : 0;
@@ -324,7 +324,7 @@ async function loadPatchPlan() {
   }
 
   if (!data.length) {
-    body.innerHTML = '<div class="empty-state"><div class="empty-icon">ðŸ“Š</div><div class="empty-title">No patch data available</div></div>';
+    body.innerHTML = '<div class="empty-state"><div class="empty-icon"></div><div class="empty-title">No patch data available</div></div>';
     SMJ.setLoading('patch-plan-body', false);
     return;
   }
@@ -399,7 +399,7 @@ function getOptimiseParams() {
     target:          val('opt-target', 72),
     jobs_per_fte_day: val('opt-jobs-per-fte', 4),
     absence_rate:    val('opt-absence-rate', 4),
-    // Fixed internal defaults â€” not exposed to user
+    // Fixed internal defaults  not exposed to user
     tolerance:  3,
     max_move:   25,
     min_move:   1,
@@ -581,9 +581,9 @@ function renderOptimisationResult(data, applied = false) {
         <td>${SMJ.fmt.num(r.engineers_before)}</td>
         <td>${SMJ.fmt.num(r.engineers_after)}</td>
         <td class="${deltaCls}">${delta > 0 ? '+' : ''}${delta}</td>
-        <td class="text-muted">${r.required_fte != null ? SMJ.fmt.num(r.required_fte) : 'â€”'}</td>
-        <td class="text-muted">${r.capacity_fte_before != null ? SMJ.fmt.num(r.capacity_fte_before) : 'â€”'}</td>
-        <td class="text-muted">${r.capacity_fte_after != null ? SMJ.fmt.num(r.capacity_fte_after) : 'â€”'}</td>
+        <td class="text-muted">${r.required_fte != null ? SMJ.fmt.num(r.required_fte) : ''}</td>
+        <td class="text-muted">${r.capacity_fte_before != null ? SMJ.fmt.num(r.capacity_fte_before) : ''}</td>
+        <td class="text-muted">${r.capacity_fte_after != null ? SMJ.fmt.num(r.capacity_fte_after) : ''}</td>
         <td class="${r.fte_gap_before < 0 ? 'text-crit' : 'text-ok'}">${r.fte_gap_before >= 0 ? '+' : ''}${SMJ.fmt.num(r.fte_gap_before)}</td>
         <td class="${r.fte_gap_after  < 0 ? 'text-crit' : 'text-ok'}">${r.fte_gap_after  >= 0 ? '+' : ''}${SMJ.fmt.num(r.fte_gap_after)}</td>
       </tr>
@@ -608,14 +608,14 @@ function renderOptimisationResult(data, applied = false) {
     </div>
     <div class="d-flex gap-8 mb-12 flex-wrap">
       <span class="stat-chip">Target: <strong>${SMJ.fmt.pct(data.parameters?.target_utilisation_pct)}</strong></span>
-      <span class="stat-chip">Jobs/FTE/day: <strong>${data.parameters?.jobs_per_fte_day ?? 'â€”'}</strong></span>
+      <span class="stat-chip">Jobs/FTE/day: <strong>${data.parameters?.jobs_per_fte_day ?? ''}</strong></span>
       <span class="stat-chip">Absence: <strong>${SMJ.fmt.pct(data.parameters?.absence_rate_pct)}</strong></span>
     </div>
     <div class="grid-5-7 optimise-result-grid">
       <div>
         <div class="fs-12 fw-600 mb-8 text-muted">REGION IMPACT</div>
         <table class="data-table optimise-impact-table">
-          <thead><tr><th>Region</th><th>Eng. Before</th><th>Eng. After</th><th>Î”</th><th>Req FTE</th><th>Cap FTE Before</th><th>Cap FTE After</th><th>Gap Before</th><th>Gap After</th></tr></thead>
+          <thead><tr><th>Region</th><th>Eng. Before</th><th>Eng. After</th><th></th><th>Req FTE</th><th>Cap FTE Before</th><th>Cap FTE After</th><th>Gap Before</th><th>Gap After</th></tr></thead>
           <tbody>${rows}</tbody>
         </table>
       </div>
@@ -645,7 +645,7 @@ async function loadOptimisation() {
     if (body) {
       body.innerHTML = `
         <div class="empty-state">
-          <div class="empty-icon text-crit">âš ï¸</div>
+          <div class="empty-icon text-crit"></div>
           <div class="empty-title">Optimisation Failed</div>
           <div class="empty-desc">An error occurred while generating recommendations. Please try again.</div>
         </div>
