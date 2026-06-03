@@ -978,12 +978,14 @@ def chatbot_message():
         answer = _huggingface_chat(messages)
         return jsonify({"reply": answer})
     except RuntimeError as exc:
+        app.logger.exception("Chatbot runtime configuration error")
         return jsonify({
-            "error": str(exc),
+            "error": "Chatbot service configuration error.",
             "config_required": "Set HF_TOKEN or HF_API_KEY, plus HF_CHAT_MODEL. Set HF_CHAT_PROVIDER=novita for provider-based Hugging Face examples.",
         }), 502
     except Exception as exc:
-        return jsonify({"error": str(exc)}), 500
+        app.logger.exception("Unexpected chatbot_message failure")
+        return jsonify({"error": "An internal error has occurred."}), 500
 
 
 @app.route("/api/chatbot/config")

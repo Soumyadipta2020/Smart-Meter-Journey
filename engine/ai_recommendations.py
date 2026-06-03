@@ -4,13 +4,16 @@ Generates intelligent operational recommendations from cross-module signals.
 Produces prioritised alerts for the executive dashboard.
 """
 from datetime import date
+import logging
 
 from engine.ingestion import get_capacity_demand, to_float, to_int
 from engine.cancellation_engine import get_regional_cancellation_heatmap
 from engine.field_ops_engine import predict_understaffing
 from engine.financial_engine import get_financial_kpis
 
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+logger = logging.getLogger(__name__)
+
+# ─────────────────────────────────────────────────────────────────────────────
 
 REGIONS = ["NW", "NE", "MID", "SE", "SW", "WAL", "SCO", "YRK"]
 
@@ -258,5 +261,6 @@ def get_natural_language_summary(year: int = 2025, recommendations: dict = None)
             f"Review the recommendations panel for detailed actions."
         )
         return summary
-    except Exception as e:
-        return f"Operational health summary unavailable. Error: {e}"
+    except Exception:
+        logger.exception("Failed to generate natural language summary")
+        return "Operational health summary unavailable."
