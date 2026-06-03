@@ -1046,7 +1046,8 @@ def data_generate():
         clear_forecast_cache()
         return jsonify({"status": "ok", "message": "Datasets regenerated successfully", "data_health": health_info})
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        app.logger.exception("Data generation failed")
+        return jsonify({"error": "An internal error occurred while generating datasets."}), 500
 
 
 @app.route("/api/regions")
