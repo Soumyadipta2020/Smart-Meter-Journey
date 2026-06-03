@@ -876,7 +876,8 @@ def financial_compare():
         _, _, compare, _ = _get_financial_engine()
         return jsonify(compare(scenarios))
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        app.logger.exception("Failed to compare financial scenarios")
+        return jsonify({"error": "An internal error has occurred."}), 500
 
 
 @app.route("/api/financial/forecast-profitability")
@@ -886,7 +887,8 @@ def financial_forecast():
         _, _, _, get_forecast = _get_financial_engine()
         return jsonify(get_forecast(region))
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        app.logger.exception("Failed to forecast financial profitability")
+        return jsonify({"error": "An internal error has occurred."}), 500
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -903,7 +905,8 @@ def ai_recommendations():
         get_recs, _ = _get_ai_engine()
         return jsonify(get_recs(year, max_results))
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        app.logger.exception("Failed to generate AI recommendations")
+        return jsonify({"error": "An internal error has occurred."}), 500
 
 
 @app.route("/api/ai/summary")
@@ -915,7 +918,8 @@ def ai_summary():
         _, get_summary = _get_ai_engine()
         return jsonify({"summary": get_summary(year)})
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        app.logger.exception("Failed to generate AI summary")
+        return jsonify({"error": "An internal error has occurred."}), 500
 
 
 @app.route("/api/ai/dashboard")
@@ -936,7 +940,8 @@ def ai_dashboard():
             "summary": get_summary(year, recs),
         })
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        app.logger.exception("Failed to build AI dashboard payload")
+        return jsonify({"error": "An internal error has occurred."}), 500
 
 
 # ─────────────────────────────────────────────────────────────────────────────
